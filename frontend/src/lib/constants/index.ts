@@ -1,0 +1,68 @@
+import type { Location } from "@/lib/types";
+
+export const MOCK_LOCATIONS: Location[] = [
+    {
+        id: 1,
+        name: "RS Siloam Hospitals",
+        type: "hospital",
+        address: "Jl. Garnisun Dalam No.2-3, Jakarta",
+        icon: "hospital",
+        safetyRating: "Very Safe",
+    },
+    {
+        id: 2,
+        name: "Polsek Jakarta Pusat",
+        type: "police",
+        address: "Jl. Kebon Kacang Raya, Jakarta Pusat",
+        icon: "police",
+        safetyRating: "Very Safe",
+    },
+    {
+        id: 3,
+        name: "Mall Grand Indonesia",
+        type: "mall",
+        address: "Jl. MH Thamrin No.1, Jakarta",
+        icon: "building",
+        safetyRating: "Safe",
+    },
+    {
+        id: 4,
+        name: "Stasiun MRT Bundaran HI",
+        type: "transport",
+        address: "Jl. MH Thamrin, Jakarta Pusat",
+        icon: "train",
+        safetyRating: "Safe",
+    },
+    {
+        id: 5,
+        name: "Kantor Walikota Jakarta",
+        type: "government",
+        address: "Jl. Medan Merdeka Selatan, Jakarta",
+        icon: "building",
+        safetyRating: "Very Safe",
+    },
+    {
+        id: 6,
+        name: "Safe Meeting Point - Taman Menteng",
+        type: "meeting",
+        address: "Jl. HOS Cokroaminoto, Menteng",
+        icon: "mappin",
+        safetyRating: "Safe",
+    },
+    {
+        id: 7,
+        name: "Universitas Indonesia",
+        type: "education",
+        address: "Depok, Jawa Barat",
+        icon: "building",
+        safetyRating: "Safe",
+    },
+    {
+        id: 8,
+        name: "Plaza Indonesia",
+        type: "mall",
+        address: "Jl. MH Thamrin Kav. 28-30, Jakarta",
+        icon: "building",
+        safetyRating: "Safe",
+    },
+];
