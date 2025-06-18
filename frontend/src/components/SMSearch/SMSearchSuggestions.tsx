@@ -7,7 +7,10 @@ interface SMSearchSuggestionsProps {
     onSuggestionSelect: (suggestion: Location) => void;
 }
 
-export const SMSearchSuggestions = ({ suggestions, onSuggestionSelect }: SMSearchSuggestionsProps) => {
+export const SMSearchSuggestions = ({ 
+    suggestions, 
+    onSuggestionSelect,
+}: SMSearchSuggestionsProps) => {
     if (suggestions.length === 0) {
         return (
             <div className="text-center py-8 text-gray-500">

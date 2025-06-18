@@ -1,49 +1,101 @@
-import { APIProvider } from "@vis.gl/react-google-maps";
 import { SMMap } from "./components/maps/SMMap.tsx";
-import { Button } from "./components/ui/button.tsx";
-import { SMSearchBar } from "./components/SMSearch/SMSeachBar";
+import { SMSearchBar } from "./components/SMSearch/SMSearchBar";
 import { useSearch } from "./hooks/useSearch";
 import { SMSearchScreen } from "./components/SMSearch/SMSearchScreen";
+import { SMPinOnMapScreen } from "./components/SMSearch/PinOnMapScreen";
+import { useRef } from "react";
 
 function App() {
-    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+    const mapRef = useRef<google.maps.Map | null>(null);
+
     const {
         searchQuery,
         searchMode,
         selectedLocation,
         recentSearches,
         filteredSuggestions,
+        currentCoordinate,
+        isLoading,
+        error,
         enterSearchMode,
         exitSearchMode,
+        enterPinMode,
+        exitPinMode,
         selectLocation,
         updateSearchQuery,
+        updateCoordinate,
     } = useSearch();
 
-    return (
-        // <APIProvider apiKey={apiKey}>
-        <main className="w-screen h-screen bg-cyan-400">
-            {searchMode === "map" ? (
-                <div className="absolute top-4 left-4 right-4 z-10">
-                    <SMSearchBar
-                        value={selectedLocation ? selectedLocation.name : ""}
-                        onFocus={enterSearchMode}
-                        readOnly={true}
+    // const handleMapClick = (event: google.maps.MapMouseEvent) => {
+    //     console.log("Map clicked:", event);
+    //     if (searchMode === "pin" && event.latLng) {
+    //         const lat = event.latLng.lat();
+    //         const lng = event.latLng.lng();
+    //         updateCoordinates({ lat, lng });
+    //     }
+    // };
+
+    const setMapReference = (map: google.maps.Map) => {
+        mapRef.current = map;
+    };
+
+    const renderOverlay = () => {
+        switch (searchMode) {
+            case "map":
+                return (
+                    <div className="absolute bottom-6 left-4 right-4 z-10">
+                        <SMSearchBar
+                            value={selectedLocation ? selectedLocation.name : ""}
+                            onFocus={enterSearchMode}
+                            readOnly={true}
+                        />
+                    </div>
+                );
+            case "search":
+                return (
+                    <div className="absolute inset-0 z-10 pointer-events-auto">
+                        <SMSearchScreen
+                            searchQuery={searchQuery}
+                            recentSearches={recentSearches}
+                            filteredSuggestions={filteredSuggestions}
+                            isLoading={isLoading}
+                            error={error}
+                            onSearchQueryChange={updateSearchQuery}
+                            onBack={exitSearchMode}
+                            onSuggestionSelect={selectLocation}
+                            onChooseOnMap={enterPinMode}
+                        />
+                    </div>
+                );
+            case "pin":
+                return (
+                    <SMPinOnMapScreen
+                        onBack={exitPinMode}
+                        onCoordinateSelect={updateCoordinate}
+                        coordinate={currentCoordinate}
                     />
-                </div>
-            ) : (
-                <SMSearchScreen
-                    searchQuery={searchQuery}
-                    recentSearches={recentSearches}
-                    filteredSuggestions={filteredSuggestions}
-                    onSearchQueryChange={updateSearchQuery}
-                    onBack={exitSearchMode}
-                    onSuggestionSelect={selectLocation}
+                );
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <main className="w-screen h-screen relative">
+            <div className="absolute inset-0">
+                <SMMap
+                    center={currentCoordinate}
+                    zoom={14}
+                    onMapLoad={setMapReference}
+                    // onClick={handleMapClick}
+                    className={searchMode === "search" ? "pointer-events-none" : ""}
                 />
-            )}
-            {/* <SMMap center={{ lat: 37.7749, lng: -122.4194 }} zoom={10} /> */}
+            </div>
+
+            {renderOverlay()}
         </main>
-        // {/* </APIProvider> */}
     );
 }
 
 export default App;
+
