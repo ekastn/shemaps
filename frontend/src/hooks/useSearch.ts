@@ -1,49 +1,33 @@
-import { useState, useCallback, useEffect } from "react";
-import type { SearchMode, Location, Coordinate, PlaceResult } from "@/lib/types";
+import { useState, useCallback, useEffect, useRef } from "react";
+import type { Location, Coordinate, AppMode } from "@/lib/types";
 import {
     getRecentLocations,
-    convertPlaceToLocation,
 } from "@/services/locationService";
-import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
-import { waitForGoogleMapsToLoad } from "@/lib/utils/googleMapsLoader";
 
 export const useSearch = () => {
-    const [searchMode, setSearchMode] = useState<SearchMode>("map");
+    const [appMode, setAppMode] = useState<AppMode>("map");
     const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
     const [recentSearches, setRecentSearches] = useState<Location[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [currentCoordinate, setCurrentCoordinate] = useState<Coordinate>({ lat: -6.2088, lng: 106.8456 }); // Default to Jakarta
-    const [isGoogleMapsReady, setIsGoogleMapsReady] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filteredSuggestions, setFilteredSuggestions] = useState<Location[]>([]);
+    const autocompleteServiceRef = useRef<google.maps.places.AutocompleteService | null>(null);
+    const placesServiceRef = useRef<google.maps.places.PlacesService | null>(null);
 
-    // Wait for Google Maps to be ready
-    useEffect(() => {
-        waitForGoogleMapsToLoad().then(() => {
-            setIsGoogleMapsReady(true);
-        });
-    }, []);
-
-    // Initialize the places autocomplete
-    const {
-        ready: placesReady,
-        value: searchQuery,
-        suggestions: { data: places, loading: isPlacesLoading },
-        setValue: setSearchQuery,
-        clearSuggestions,
-    } = usePlacesAutocomplete({
-        requestOptions: {
-            /* Define search behavior options here */
-            componentRestrictions: { country: 'id' }, // Restrict to Indonesia
-        },
-        debounce: 300,
-        initOnMount: isGoogleMapsReady, // Only initialize when Google Maps is ready
-    });
-
+    // Use the useMapsLibrary hook to ensure the Places library is loaded
     const placesLib = useMapsLibrary("places");
     const map = useMap();
 
-    const [filteredSuggestions, setFilteredSuggestions] = useState<Location[]>([]);
+    useEffect(() => {
+        if (!placesLib && !map) return;
+
+        if (!autocompleteServiceRef.current) {
+            autocompleteServiceRef.current = new placesLib.AutocompleteService();
+        }
+    }, [placesLib]);
 
     useEffect(() => {
         const fetchRecentSearches = async () => {
@@ -55,108 +39,117 @@ export const useSearch = () => {
                 setError("Failed to load recent searches");
             }
         };
-
         fetchRecentSearches();
     }, []);
 
+    // Fetch autocomplete suggestions from Google Maps API
     useEffect(() => {
-        if (!placesLib && !map) return;
-        console.log("Places ready:", placesReady);
-        const convertPlaces = async () => {
-            if (isPlacesLoading) {
-                setIsLoading(true);
-                return;
-            }
-
-            if (!placesReady) {
-                setFilteredSuggestions([]);
-                setIsLoading(true);
-                return;
-            }
-
-            console.log(places);
-
-            if (places.length > 0) {
-                setIsLoading(true);
-                try {
-                    const locations: Location[] = places.map((suggestion, index) => ({
-                        id: index,
-                        name: suggestion.description,
-                        type: "custom",
-                        address: suggestion.structured_formatting?.secondary_text || "",
-                        icon: "location-marker",
-                        safetyRating: "Safe",
-                        placeId: suggestion.place_id
-                    }));
-                    
-                    setFilteredSuggestions(locations);
-                } catch (err) {
-                    console.error("Failed to convert places to locations:", err);
-                    setError("Failed to process search results");
-                } finally {
-                    setIsLoading(false);
-                }
-            } else if (searchQuery === '') {
+        if (!autocompleteServiceRef.current || !searchQuery.trim()) {
+            setFilteredSuggestions([]);
+            setIsLoading(false);
+            return;
+        }
+        setIsLoading(true);
+        autocompleteServiceRef.current.getPlacePredictions({
+            input: searchQuery
+        }, (predictions, status) => {
+            if (status !== google.maps.places.PlacesServiceStatus.OK || !predictions) {
                 setFilteredSuggestions([]);
                 setIsLoading(false);
-            } else if (!isPlacesLoading && places.length === 0 && searchQuery.trim() !== '') {
-                setFilteredSuggestions([]);
-                setIsLoading(false);
+                return;
             }
-        };
-
-        convertPlaces();
-    }, [places, isPlacesLoading, searchQuery, placesReady]);
+            const locations: Location[] = predictions.map((suggestion, index) => ({
+                id: index, // Always use a number for id
+                name: suggestion.structured_formatting.main_text,
+                address: suggestion.structured_formatting?.secondary_text || "",
+                placeId: suggestion.place_id
+            }));
+            setFilteredSuggestions(locations);
+            setIsLoading(false);
+        });
+    }, [searchQuery]);
 
     const enterSearchMode = useCallback(() => {
-        setSearchMode("search");
+        setAppMode("search");
     }, []);
 
     const exitSearchMode = useCallback(() => {
-        setSearchMode("map");
-        setSearchQuery("");
-        clearSuggestions();
-    }, [setSearchQuery, clearSuggestions]);
+        setAppMode("map");
+    }, []);
 
     const enterPinMode = useCallback(() => {
-        setSearchMode("pin");
+        setAppMode("pin");
     }, []);
 
     const exitPinMode = useCallback(() => {
-        setSearchMode("search");
+        setAppMode("search");
     }, []);
+    
+    const enterPlaceInfo = useCallback(() => {
+        setAppMode("placeInfo");
+    }, []);
+    
+    const exitPlaceInfo = useCallback(() => {
+        setAppMode("map");
+        setSearchQuery("");
+        setFilteredSuggestions([]);
+        setSelectedLocation(null);
+    }, []);
+
+    // Helper to get coordinates from placeId
+    const getCoordinatesFromPlaceId = async (placeId: string): Promise<Coordinate | null> => {
+        return new Promise((resolve) => {
+            if (!window.google || !window.google.maps) return resolve(null);
+            if (!placesServiceRef.current) {
+                // Create a dummy div for PlacesService
+                const dummyDiv = document.createElement("div");
+                placesServiceRef.current = new window.google.maps.places.PlacesService(dummyDiv);
+            }
+            placesServiceRef.current!.getDetails({ placeId }, (place, status) => {
+                if (status === window.google.maps.places.PlacesServiceStatus.OK && place && place.geometry && place.geometry.location) {
+                    resolve({ lat: place.geometry.location.lat(), lng: place.geometry.location.lng() });
+                } else {
+                    resolve(null);
+                }
+            });
+        });
+    };
 
     const selectLocation = useCallback(
         async (location: Location) => {
-            setSelectedLocation(location);
-            setSearchQuery(location.name, false);
-            setSearchMode("map");
-            clearSuggestions();
-
-            // Update coordinates if available
-            if (location.coordinate) {
-                setCurrentCoordinate(location.coordinate);
-            } else if (location.placeId) {
-                // If we have a placeId but no coordinates, get them from Google Places API
+            // Create a new location object to ensure we have the coordinate
+            const locationWithCoord = { ...location };
+            
+            // If we don't have coordinates but have a placeId, fetch them
+            if ((!location.coordinate || !location.coordinate.lat || !location.coordinate.lng) && location.placeId) {
                 try {
-                    setIsLoading(true);
-                    const results = await getGeocode({ placeId: location.placeId });
-                    const { lat, lng } = getLatLng(results[0]);
-                    const coordinate = { lat, lng };
-                    
-                    // Update the location with coordinates
-                    const updatedLocation = { 
-                        ...location, 
-                        coordinate 
-                    };
-                    
-                    setSelectedLocation(updatedLocation);
-                    setCurrentCoordinate(coordinate);
-                } catch (error) {
-                    console.error("Error getting coordinates for place:", error);
-                } finally {
-                    setIsLoading(false);
+                    const coords = await getCoordinatesFromPlaceId(location.placeId);
+                    if (coords) {
+                        locationWithCoord.coordinate = coords;
+                    }
+                } catch (err) {
+                    console.error("Failed to get coordinates for place:", err);
                 }
+            }
+
+            // If we still don't have coordinates, use the current map center as fallback
+            if (!locationWithCoord.coordinate) {
+                locationWithCoord.coordinate = {
+                    lat: currentCoordinate.lat,
+                    lng: currentCoordinate.lng,
+                    title: location.name
+                };
+            }
+
+            setSelectedLocation(locationWithCoord);
+            setSearchQuery(location.name);
+            setAppMode("placeInfo");
+            setFilteredSuggestions([]);
+
+            // Update map view
+            if (map && map.panTo && locationWithCoord.coordinate) {
+                map.panTo(locationWithCoord.coordinate);
+                setCurrentCoordinate(locationWithCoord.coordinate);
             }
 
             // Add to recent searches if not already there
@@ -167,35 +160,27 @@ export const useSearch = () => {
                 return [location, ...prev].slice(0, 5); // Limit to 5 recent searches
             });
         },
-        [setSearchQuery, clearSuggestions]
+        [map]
     );
 
-    const updateSearchQuery = useCallback((query: string) => {
-        setSearchQuery(query);
-        if (query.trim() === '') {
-            setFilteredSuggestions([]);
-        }
-    }, [setSearchQuery]);
-
-    const updateCoordinate = useCallback((coordinate: Coordinate) => {
-        setCurrentCoordinate(coordinate);
-    }, []);
-
     return {
-        searchQuery,
-        searchMode,
+        appMode,
         selectedLocation,
+        setSelectedLocation,
         recentSearches,
-        filteredSuggestions,
-        currentCoordinate,
-        isLoading: isLoading || isPlacesLoading || !placesReady,
+        isLoading,
         error,
+        currentCoordinate,
+        setCurrentCoordinate,
+        searchQuery,
+        setSearchQuery,
+        filteredSuggestions,
         enterSearchMode,
         exitSearchMode,
         enterPinMode,
         exitPinMode,
+        enterPlaceInfo,
+        exitPlaceInfo,
         selectLocation,
-        updateSearchQuery,
-        updateCoordinate,
     };
 };
