@@ -19,6 +19,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
   const [currentCoordinate, setCurrentCoordinate] = useState<Coordinate | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [recentSearches, setRecentSearches] = useState<Location[]>([]);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   const map = useMap();
   const navigate = useNavigate();
@@ -26,11 +27,50 @@ export function LocationProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (map?.panTo && selectedLocation?.coordinate) {
       map.panTo(selectedLocation.coordinate);
-    }
-    if (selectedLocation) {
       navigate(`/place/${selectedLocation?.id}`);
     }
   }, [selectedLocation]);
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setLocationError('Geolocation is not supported by your browser');
+      return;
+    }
+
+    const handleSuccess = (position: GeolocationPosition) => {
+      const { latitude, longitude } = position.coords;
+      const newCoord = { lat: latitude, lng: longitude };
+      setCurrentCoordinate(newCoord);
+      setLocationError(null);
+
+      // if (map?.panTo) {
+      //   map.panTo(newCoord);
+      // }
+    };
+
+    const handleError = (error: GeolocationPositionError) => {
+      console.error('Error getting location:', error);
+      setLocationError('Unable to retrieve your location');
+    };
+
+    // Request high accuracy if needed (uses more battery)
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    };
+
+    const watchId = navigator.geolocation.watchPosition(
+      handleSuccess,
+      handleError,
+      options
+    );
+
+    // Cleanup the geolocation watcher when component unmounts
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, [map]);
 
   const addToRecentSearches = (location: Location) => {
     setRecentSearches(prev => {

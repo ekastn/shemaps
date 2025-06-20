@@ -4,7 +4,7 @@ import { useLocation } from '@/contexts/LocationContext';
 import type { Location } from '@/lib/types';
 
 export function usePlaces() {
-  const { setSelectedLocation, addToRecentSearches, setCurrentCoordinate } = useLocation();
+  const { setSelectedLocation, addToRecentSearches } = useLocation();
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
 
@@ -24,7 +24,6 @@ export function usePlaces() {
 
       // If location has coordinates, use them
       if (location.coordinate) {
-        setCurrentCoordinate(location.coordinate);
         setSelectedLocation(location);
         addToRecentSearches(location);
       }
@@ -34,7 +33,6 @@ export function usePlaces() {
         const coords = await getCoordinatesFromPlaceId(location.placeId);
         if (coords) {
           const locationWithCoords = { ...location, coordinate: coords };
-          setCurrentCoordinate(coords);
           setSelectedLocation(locationWithCoords);
           addToRecentSearches(locationWithCoords);
         }
@@ -45,7 +43,7 @@ export function usePlaces() {
     } finally {
       setIsSearching(false);
     }
-  }, [setSelectedLocation, addToRecentSearches, setCurrentCoordinate, getCoordinatesFromPlaceId]);
+  }, [setSelectedLocation, addToRecentSearches, getCoordinatesFromPlaceId]);
 
   const clearSearch = useCallback(() => {
     setSearchQuery('');
