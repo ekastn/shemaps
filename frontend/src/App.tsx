@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router";
 import { SMMap } from "@/components/maps/SMMap";
 import { useLocation } from "@/contexts/LocationContext";
-import { HomePage, SearchPage, PinOnMapPage, PlaceInfoPage } from "@/pages";
+import { HomePage, SearchPage, PinOnMapPage, PlaceInfoPage, DirectionsPage } from "@/pages";
 
 export default function App() {
   const { currentCoordinate, selectedLocation } = useLocation();
@@ -24,6 +24,7 @@ export default function App() {
         <Route path="/pin" element={<PinOnMapPage />} />
         <Route path="/place/:id" element={<PlaceInfoPage />} />
         <Route path="/place/new" element={<PlaceInfoPage isNewPlace={true} />} />
+        <Route path="/directions" element={<DirectionsPage />} />
       </Routes>
     </div>
   );

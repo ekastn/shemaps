@@ -1,27 +1,25 @@
-import { useParams, useNavigate, useLocation as useRouteLocation } from "react-router";
+import { useNavigate } from "react-router";
 import { useLocation } from "@/contexts/LocationContext";
-import type { Location } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { X, Navigation, Play, Bookmark } from "lucide-react";
+import { useDirections } from "@/contexts/DirectionsContext";
 
 interface PlaceInfoPageProps {
   isNewPlace?: boolean;
 }
 
 export const PlaceInfoPage = ({ isNewPlace = false }: PlaceInfoPageProps) => {
-  useParams(); // We don't need the id right now, but we'll keep the hook call
   const navigate = useNavigate();
-  const location = useRouteLocation();
   const { selectedLocation, setSelectedLocation } = useLocation();
+  const { clearDirections } = useDirections();
 
-  const routeLocation = (location.state?.location as Location) || selectedLocation;
-
-  if (!routeLocation) {
+  if (!selectedLocation) {
     navigate('/');
-    return null;
+    return
   }
 
   const handleClose = () => {
+    clearDirections();
     setSelectedLocation(null);
     navigate('/');
   };
@@ -52,14 +50,14 @@ export const PlaceInfoPage = ({ isNewPlace = false }: PlaceInfoPageProps) => {
         <div className="p-6 max-h-[60vh] overflow-y-auto">
           <div className="mb-6">
             <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold mb-1">{routeLocation.name}</h1>
+              <h1 className="text-2xl font-bold mb-1">{selectedLocation.name}</h1>
               {isNewPlace && (
                 <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
                   New Place
                 </span>
               )}
             </div>
-            <p className="text-gray-600">{routeLocation.address}</p>
+            <p className="text-gray-600">{selectedLocation.address}</p>
           </div>
 
           {/* Action Buttons */}
@@ -68,6 +66,7 @@ export const PlaceInfoPage = ({ isNewPlace = false }: PlaceInfoPageProps) => {
               variant="outline"
               size="sm"
               className="flex-1 gap-2"
+              onClick={() => navigate('/directions')}
             >
               <Navigation className="h-4 w-4" />
               <span>Directions</span>
