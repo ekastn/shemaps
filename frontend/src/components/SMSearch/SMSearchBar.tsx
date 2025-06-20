@@ -18,7 +18,7 @@ interface SMSearchBarProps {
 
 export const SMSearchBar = ({
     value: propValue,
-    placeholder = "Cari tujuan aman Anda...",
+    placeholder = "Where do you want to go?",
     isSearchMode = false,
     onFocus,
     onChange,

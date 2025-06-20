@@ -88,11 +88,56 @@ export const usePlacesSearch = () => {
         []
     );
 
+    // Search places function
+    const searchPlaces = useCallback(async (query: string) => {
+        if (!autocompleteServiceRef.current) return [];
+        
+        try {
+            const request = {
+                query: query,
+                fields: ['name', 'formatted_address', 'geometry', 'place_id'],
+            };
+            
+            const service = new google.maps.places.PlacesService(document.createElement('div'));
+            const results = await new Promise<google.maps.places.PlaceResult[]>((resolve) => {
+                service.textSearch(request, (results, status) => {
+                    if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+                        resolve(results);
+                    } else {
+                        resolve([]);
+                    }
+                });
+            });
+            
+            return results.map((result, index) => {
+                const location: Location = {
+                    id: index, // Use index as ID since we need a number
+                    name: result.name || '',
+                    address: result.formatted_address || '',
+                    placeId: result.place_id,
+                };
+                
+                if (result.geometry?.location) {
+                    location.coordinate = {
+                        lat: result.geometry.location.lat(),
+                        lng: result.geometry.location.lng(),
+                    };
+                }
+                
+                return location;
+            });
+        } catch (error) {
+            console.error('Error searching places:', error);
+            return [];
+        }
+    }, []);
+
     return {
         searchQuery,
         setSearchQuery,
         filteredSuggestions,
         isLoading,
         getCoordinatesFromPlaceId,
+        searchPlaces,
     };
 };

@@ -1,15 +1,25 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router";
 import "./index.css";
 import App from "./App.tsx";
 import { APIProvider } from "@vis.gl/react-google-maps";
+import { LocationProvider } from "./contexts/LocationContext.tsx";
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
+const router = createBrowserRouter([
+  {
+    path: "*",
+    element: (
+      <APIProvider apiKey={apiKey} libraries={["places"]}>
+        <LocationProvider>
+          <App />
+        </LocationProvider>
+      </APIProvider>
+    ),
+  },
+]);
+
 createRoot(document.getElementById("root")!).render(
-    <StrictMode>
-        <APIProvider apiKey={apiKey} libraries={["places"]}>
-            <App />
-        </APIProvider>
-    </StrictMode>
+  <RouterProvider router={router} />
 );
