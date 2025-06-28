@@ -130,6 +130,8 @@ func mount(h *handlers.Handlers) http.Handler {
 		r.Get("/routes", h.Directions.GetDirections)
 
 		r.Post("/reports", h.Report.CreateReport)
+		r.Get("/reports", h.Report.FindReports) 
+
 		// Protected routes
 		// r.Group(func(r chi.Router) {
 		// 	authMiddleware := custommiddleware.Authenticate(h.Auth.GetAuthService())
