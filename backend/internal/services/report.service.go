@@ -58,8 +58,6 @@ func (s *ReportService) FindNearbyReports(ctx context.Context, arg ArgFindReport
 		South:        arg.South,
 		East:         arg.East,
 		West:         arg.West,
-		DangerLevel:  "DANGEROUS",
-		CautionLevel: "CAUTIOUS",
 	}
 
 	reports, err := s.store.FindReportsInBounds(ctx, params)

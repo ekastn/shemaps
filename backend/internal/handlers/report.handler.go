@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -75,11 +76,15 @@ func (h *ReportHandler) FindReports(w http.ResponseWriter, r *http.Request) {
 		West:  west,
 	}
 
+	log.Println("Finding reports in bounds:", arg)
+
 	reports, err := h.reportService.FindNearbyReports(r.Context(), arg)
 	if err != nil {
 		utils.Error(w, http.StatusInternalServerError, "internal_error", "Failed to find reports")
 		return
 	}
+
+	log.Println("Found reports:", reports)
 
 	utils.Success(w, http.StatusOK, reports)
 }

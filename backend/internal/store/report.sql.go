@@ -15,7 +15,7 @@ const createSafetyReport = `-- name: CreateSafetyReport :one
 INSERT INTO safety_reports (
   reporter_user_id, location, latitude, longitude, safety_level, tags, description
 ) VALUES (
-  $1, ST_SetSRID(ST_MakePoint($2, $3), 4326), $2, $3, $4, $5, $6
+  $1, ST_SetSRID(ST_MakePoint($3, $2), 4326), $2, $3, $4, $5, $6
 ) RETURNING id, reporter_user_id, location, latitude, longitude, safety_level, description, tags, confirmations_count, created_at
 `
 
@@ -56,25 +56,19 @@ func (q *Queries) CreateSafetyReport(ctx context.Context, arg CreateSafetyReport
 const findReportsInBounds = `-- name: FindReportsInBounds :many
 SELECT id, reporter_user_id, location, latitude, longitude, safety_level, description, tags, confirmations_count, created_at FROM safety_reports
 WHERE
-  (safety_level = $1 OR safety_level = $2)
-  AND
-  location && ST_MakeEnvelope($3::float8, $4::float8, $5::float8, $6::float8, 4326)
+  location && ST_MakeEnvelope($1::float8, $2::float8, $3::float8, $4::float8, 4326)
 ORDER BY created_at DESC
 `
 
 type FindReportsInBoundsParams struct {
-	DangerLevel  string  `json:"danger_level"`
-	CautionLevel string  `json:"caution_level"`
-	West         float64 `json:"west"`
-	South        float64 `json:"south"`
-	East         float64 `json:"east"`
-	North        float64 `json:"north"`
+	West  float64 `json:"west"`
+	South float64 `json:"south"`
+	East  float64 `json:"east"`
+	North float64 `json:"north"`
 }
 
 func (q *Queries) FindReportsInBounds(ctx context.Context, arg FindReportsInBoundsParams) ([]SafetyReport, error) {
 	rows, err := q.db.Query(ctx, findReportsInBounds,
-		arg.DangerLevel,
-		arg.CautionLevel,
 		arg.West,
 		arg.South,
 		arg.East,

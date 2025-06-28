@@ -44,8 +44,6 @@ func (s *RouteService) CalculateSafeRoutes(ctx context.Context, origin, destinat
 		South:        overallBounds.SouthWest.Lat,
 		East:         overallBounds.NorthEast.Lng,
 		West:         overallBounds.SouthWest.Lng,
-		DangerLevel:  "DANGEROUS",
-		CautionLevel: "CAUTIOUS",
 	}
 
 	dangerReports, err := s.store.FindReportsInBounds(ctx, params)
