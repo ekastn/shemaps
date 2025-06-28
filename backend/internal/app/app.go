@@ -12,6 +12,8 @@ import (
 	"github.com/ekastn/shemaps/backend/internal/config"
 	"github.com/ekastn/shemaps/backend/internal/handlers"
 	"github.com/ekastn/shemaps/backend/internal/services"
+	"github.com/ekastn/shemaps/backend/internal/store"
+	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -21,6 +23,7 @@ import (
 type app struct {
 	srv *http.Server
 	cfg *config.Config
+	db  *pgxpool.Pool
 }
 
 func New(cfg *config.Config) *app {
@@ -30,12 +33,28 @@ func New(cfg *config.Config) *app {
 }
 
 func (a *app) Init() {
+	conn, err := pgxpool.New(context.Background(), a.cfg.PostgresURL)
+	if err != nil {
+		log.Fatalf("Unable to connect to database: %v\n", err)
+	}
+
+	err = conn.Ping(context.Background())
+	if err != nil {
+		log.Fatalf("Unable to ping database: %v\n", err)
+	}
+
+	a.db = conn
+
+	queries := store.New(conn)
+
 	mapsService, err := services.NewMapsService(a.cfg)
 	if err != nil {
 		log.Fatalf("Error creating maps service: %v", err)
 	}
 
-	handler := handlers.NewHandlers(mapsService)
+	reportService := services.NewReportService(queries)
+
+	handler := handlers.NewHandlers(mapsService, *reportService, queries, a.cfg)
 
 	mux := mount(handler)
 
@@ -71,6 +90,8 @@ func (a *app) Start() {
 		log.Fatalf("Server forced to shutdown: %v\n", err)
 	}
 
+	a.db.Close()
+
 	log.Println("Server stopped gracefully")
 }
 
@@ -101,7 +122,20 @@ func mount(h *handlers.Handlers) http.Handler {
 	})
 
 	r.Route("/api/v1", func(r chi.Router) {
-		r.Get("/directions", h.Directions.GetDirections)
+		r.Route("/auth", func(r chi.Router) {
+			r.Post("/register", h.Auth.Register)
+			r.Post("/login", h.Auth.Login)
+		})
+
+		r.Get("/routes", h.Directions.GetDirections)
+
+		r.Post("/reports", h.Report.CreateReport)
+		// Protected routes
+		// r.Group(func(r chi.Router) {
+		// 	authMiddleware := custommiddleware.Authenticate(h.Auth.GetAuthService())
+		// 	r.Use(authMiddleware)
+		// 	r.Post("/reports", h.Report.CreateReport)
+		// })
 	})
 
 	return r

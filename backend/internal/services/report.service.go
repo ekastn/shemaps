@@ -1,0 +1,46 @@
+package services
+
+import (
+	"context"
+	"log"
+
+	"github.com/ekastn/shemaps/backend/internal/store"
+	"github.com/google/uuid"
+)
+
+type ReportService struct {
+	store store.Querier
+}
+
+func NewReportService(store store.Querier) *ReportService {
+	return &ReportService{
+		store: store,
+	}
+}
+
+func (s *ReportService) CreateReport(ctx context.Context,
+	reporterUserID uuid.UUID,
+	latitude float64,
+	longitude float64,
+	safetyLevel string,
+	tags []string,
+	description string,
+) (store.SafetyReport, error) {
+	params := store.CreateSafetyReportParams{
+		ReporterUserID: reporterUserID,
+		Latitude:       latitude,
+		Longitude:      longitude,
+		SafetyLevel:    safetyLevel,
+		Tags:           tags,
+		Description:    &description,
+	}
+
+	log.Println("Creating report with parameters:", params)
+	report, err := s.store.CreateSafetyReport(ctx, params)
+	if err != nil {
+		log.Printf("Error creating report store: %v\n", err)
+		return store.SafetyReport{}, err
+	}
+
+	return report, nil
+}
