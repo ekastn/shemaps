@@ -8,12 +8,13 @@ export const usePlacesSearch = () => {
     const [isLoading, setIsLoading] = useState(false);
     const autocompleteServiceRef = useRef<google.maps.places.AutocompleteService | null>(null);
     const placesLib = useMapsLibrary("places");
+    const geocoderLib = useMapsLibrary("geocoding");
 
     // Initialize the autocomplete service
     useEffect(() => {
-        if (!placesLib) return;
+        if (!placesLib || !geocoderLib) return;
         autocompleteServiceRef.current = new placesLib.AutocompleteService();
-    }, [placesLib]);
+    }, [placesLib, geocoderLib]);
 
     // Fetch autocomplete suggestions
     const fetchSuggestions = useCallback(
@@ -60,7 +61,6 @@ export const usePlacesSearch = () => {
         return () => clearTimeout(timer);
     }, [searchQuery, fetchSuggestions]);
 
-    // Get coordinates from placeId
     const getCoordinatesFromPlaceId = useCallback(
         async (placeId: string): Promise<google.maps.LatLngLiteral | null> => {
             if (!window.google?.maps?.places) return null;
@@ -132,6 +132,40 @@ export const usePlacesSearch = () => {
         }
     }, []);
 
+    const getPlaceFromCoordinates = useCallback(
+        async (coordinates: google.maps.LatLngLiteral): Promise<Location | null> => {
+            if (!window.google?.maps?.Geocoder) {
+                console.error("Geocoder API not loaded");
+                return null;
+            }
+
+            return new Promise((resolve) => {
+                const geocoder = new window.google.maps.Geocoder();
+                geocoder.geocode({ location: coordinates }, (results, status) => {
+                    if (status === window.google.maps.GeocoderStatus.OK && results?.[0]) {
+                        const place = results[0];
+                        const addressParts = place.formatted_address.split(',');
+                        const name = addressParts[0];
+                        const address = addressParts.slice(1).join(',').trim();
+
+                        const location: Location = {
+                            id: 0, // A static ID is acceptable here as we get only one result
+                            name: name,
+                            address: address,
+                            placeId: place.place_id,
+                            coordinate: coordinates,
+                        };
+                        resolve(location);
+                    } else {
+                        console.error(`Geocode was not successful for the following reason: ${status}`);
+                        resolve(null);
+                    }
+                });
+            });
+        },
+        []
+    );
+
     return {
         searchQuery,
         setSearchQuery,
@@ -139,5 +173,6 @@ export const usePlacesSearch = () => {
         isLoading,
         getCoordinatesFromPlaceId,
         searchPlaces,
+        getPlaceFromCoordinates,
     };
 };
