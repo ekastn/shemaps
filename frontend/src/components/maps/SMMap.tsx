@@ -1,9 +1,11 @@
-import { Map, AdvancedMarker } from "@vis.gl/react-google-maps";
-import { cn } from "../../lib/utils";
+import { Map, AdvancedMarker, useMapsLibrary } from "@vis.gl/react-google-maps";
+import { cn, getRouteColor } from "@/lib/utils";
 import { useEffect, useRef } from "react";
 import type { Coordinate } from "@/lib/types";
 import { Pin } from "lucide-react";
 import { useLocation } from "@/contexts/LocationContext";
+import { SMPolyline } from "./SMPolyline";
+import { useDirections } from "@/contexts/DirectionsContext";
 
 type SMMapProps = {
     center: Coordinate;
@@ -26,6 +28,8 @@ export function SMMap({
 }: SMMapProps) {
     const mapRef = useRef<google.maps.Map | null>(null);
     const { currentCoordinate } = useLocation();
+    const { routes, selectedRouteIndex } = useDirections();
+    const geometryLibrary = useMapsLibrary("geometry");
 
     useEffect(() => {
         if (mapRef.current && center) {
@@ -44,6 +48,8 @@ export function SMMap({
         return null;
     }
 
+    const canRenderRoutes = routes && routes.length > 0 && geometryLibrary;
+
     return (
         <div className={cn("w-full h-full", className)}>
             <Map
@@ -53,12 +59,29 @@ export function SMMap({
                 gestureHandling="greedy"
                 clickableIcons={false}
                 mapId={mapId}
-            // onClick={onClick}
+                // onClick={onClick}
             >
+                {canRenderRoutes &&
+                    routes.map((route, index) => {
+                        const path = google.maps.geometry.encoding.decodePath(
+                            route.overview_polyline.points
+                        ) as google.maps.LatLngLiteral[];
+
+                        return (
+                            <SMPolyline
+                                key={index}
+                                path={path}
+                                strokeColor={getRouteColor(index)}
+                                strokeOpacity={index === selectedRouteIndex ? 1.0 : 0.5}
+                                strokeWeight={index === selectedRouteIndex ? 8 : 6}
+                                zIndex={index === selectedRouteIndex ? 2 : 1}
+                            />
+                        );
+                    })}
                 {markerCoordinate && (
                     <AdvancedMarker
                         position={markerCoordinate}
-                        title={markerCoordinate.title || 'Selected location'}
+                        title={markerCoordinate.title || "Selected location"}
                     >
                         <div className="relative">
                             <div className="absolute -translate-x-1/2 -translate-y-full">
@@ -73,7 +96,7 @@ export function SMMap({
                 {currentCoordinate && (
                     <AdvancedMarker
                         position={currentCoordinate}
-                        title={currentCoordinate.title || 'Current location'}
+                        title={currentCoordinate.title || "Current location"}
                     >
                         <div className="relative">
                             <div className="absolute -translate-x-1/2 -translate-y-full">

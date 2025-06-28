@@ -9,27 +9,26 @@ export const DirectionsPage = () => {
     const navigate = useNavigate();
     const { currentCoordinate, selectedLocation } = useLocation();
 
-    const {
-        directions,
-        calculateRoute,
-        isLoading,
-        error,
-        selectedRouteIndex,
-        setSelectedRouteIndex,
-    } = useDirections();
+    const { routes, calculateRoute, isLoading, error, selectedRouteIndex, setSelectedRouteIndex } =
+        useDirections();
+
+    console.log("error:", error);
 
     // Calculate route when component mounts or travel mode changes
     useEffect(() => {
         if (currentCoordinate && selectedLocation?.coordinate) {
+            console.log("Calculating route from direction page");
             calculateRoute(
                 { lat: currentCoordinate.lat, lng: currentCoordinate.lng },
                 selectedLocation.coordinate
             );
+        } else {
+            navigate(-1);
         }
     }, [currentCoordinate, selectedLocation, calculateRoute]);
 
     if (!selectedLocation) {
-        navigate('/');
+        navigate("/");
         return null;
     }
 
@@ -42,7 +41,7 @@ export const DirectionsPage = () => {
     };
 
     const getRouteColor = (index: number) => {
-        const colors = ['#4285F4', '#EA4335', '#FBBC05', '#34A853', '#673AB7'];
+        const colors = ["#4285F4", "#EA4335", "#FBBC05", "#34A853", "#673AB7"];
         return colors[index % colors.length];
     };
 
@@ -61,56 +60,62 @@ export const DirectionsPage = () => {
                     </Button>
                     <p className="text-sm">{selectedLocation.name}</p>
                 </div>
-                {directions?.routes && directions.routes.length > 1 && (
+                {routes && routes.length > 1 && (
                     <div className="flex overflow-x-auto p-2 space-x-2">
-                        {directions.routes.map((route, index) => (
+                        {routes.map((route, index) => (
                             <button
                                 key={index}
                                 onClick={() => handleRouteSelect(index)}
-                                className={`px-3 py-2 rounded-full text-sm whitespace-nowrap ${selectedRouteIndex === index
-                                    ? 'bg-blue-100 text-blue-800'
-                                    : 'bg-white text-gray-700'
-                                    }`}
+                                className={`px-3 py-2 rounded-full text-sm whitespace-nowrap ${
+                                    selectedRouteIndex === index
+                                        ? "bg-blue-100 text-blue-800"
+                                        : "bg-white text-gray-700"
+                                }`}
                                 style={{
-                                    border: `2px solid ${getRouteColor(index)}`
+                                    border: `2px solid ${getRouteColor(index)}`,
                                 }}
                             >
-                                Route {index + 1} • {route.legs[0]?.distance?.text} • {route.legs[0]?.duration?.text}
+                                Route {index + 1} • {route.legs[0]?.distance?.text} •{" "}
+                                {route.legs[0]?.duration?.text}
                             </button>
                         ))}
                     </div>
                 )}
             </div>
 
-            {/* Directions Panel */}
             <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-lg z-10 max-h-[60vh] overflow-hidden">
                 <div className="p-4">
-                    {directions && (
+                    {routes.length > 0 && (
                         <div className="space-y-4">
-                            {/* Route Summary */}
+                            Route Summary
                             <div className="bg-blue-50 p-3 rounded-lg">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <div className="font-medium">{directions.routes[selectedRouteIndex].legs[0].distance?.text}</div>
+                                        <div className="font-medium">
+                                            {routes[selectedRouteIndex].legs[0].distance?.text}
+                                        </div>
                                         <div className="text-sm text-gray-500">
-                                            {directions.routes[selectedRouteIndex].legs[0].duration?.text}
+                                            {routes[selectedRouteIndex].legs[0].duration?.text}
                                         </div>
                                     </div>
                                     <Button size="sm">Start</Button>
                                 </div>
                             </div>
-
-                            {/* Step-by-step directions */}
                             <div className="space-y-3 max-h-[20vh] overflow-y-auto">
-                                {directions.routes[selectedRouteIndex].legs[0].steps.map((step, index) => (
-                                    <div key={index} className="flex items-start gap-3 p-2 hover:bg-gray-50 rounded-lg">
+                                {routes[selectedRouteIndex].legs[0].steps.map((step, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex items-start gap-3 p-2 hover:bg-gray-50 rounded-lg"
+                                    >
                                         <div className="flex-shrink-0 mt-1 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs">
                                             {index + 1}
                                         </div>
                                         <div className="flex-1">
                                             <div
                                                 className="text-sm"
-                                                dangerouslySetInnerHTML={{ __html: step.instructions }}
+                                                dangerouslySetInnerHTML={{
+                                                    __html: step.html_instructions,
+                                                }}
                                             />
                                             {step.distance && (
                                                 <div className="text-xs text-gray-500 mt-1">
@@ -132,13 +137,10 @@ export const DirectionsPage = () => {
                 </div>
             )}
 
-            {error && (
-                <div className="bg-red-100 text-red-800 p-4">
-                    Error: {error}
-                </div>
-            )}
+            {error && <div className="bg-red-100 text-red-800 p-4">Error: {error}</div>}
         </>
     );
 };
 
 export default DirectionsPage;
+
