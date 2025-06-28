@@ -34,3 +34,20 @@ export interface Coordinate {
     lng: number;
     title?: string;
 }
+
+export interface SafetyReport {
+    id: string;
+    reporter_user_id: string;
+    latitude: number;
+    longitude: number;
+    safety_level: "DANGEROUS" | "CAUTIOUS" | "SAFE";
+    tags: string[];
+    description?: string;
+    confirmations_count: number;
+    created_at: string;
+}
+
+export interface RouteWithSafety extends google.maps.DirectionsRoute {
+    safety_level: "DANGEROUS" | "CAUTIOUS" | "SAFE";
+    danger_score: number;
+}

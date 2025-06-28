@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { useLocation } from "@/contexts/LocationContext";
 import { Button } from "@/components/ui/button";
-import { X, Navigation, Play, Bookmark } from "lucide-react";
+import { X, Navigation, Play, Bookmark, TriangleAlert } from "lucide-react";
 import { useDirections } from "@/contexts/DirectionsContext";
 
 interface PlaceInfoPageProps {
@@ -71,12 +71,15 @@ export const PlaceInfoPage = ({ isNewPlace = false }: PlaceInfoPageProps) => {
                             <Navigation className="h-4 w-4" />
                             <span>Directions</span>
                         </Button>
-
-                        <Button variant="outline" size="sm" className="flex-1 gap-2">
-                            <Play className="h-4 w-4" />
-                            <span>Start</span>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-1 gap-2 text-red-600 hover:text-red-700"
+                            onClick={() => navigate("/report")}
+                        >
+                            <TriangleAlert className="h-4 w-4" />
+                            <span className="text-current">Report</span>
                         </Button>
-
                         <Button
                             variant="outline"
                             size="sm"

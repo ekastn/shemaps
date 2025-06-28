@@ -1,4 +1,4 @@
-import type { Coordinate } from "@/lib/types";
+import type { Coordinate, RouteWithSafety } from "@/lib/types";
 import { useMap } from "@vis.gl/react-google-maps";
 import { createContext, type ReactNode, useCallback, useContext, useState } from "react";
 
@@ -12,7 +12,7 @@ interface DirectionsContextType {
     clearDirections: () => void;
     selectedRouteIndex: number;
     setSelectedRouteIndex: (index: number) => void;
-    routes: google.maps.DirectionsRoute[];
+    routes: RouteWithSafety[];
 }
 
 const DirectionsContext = createContext<DirectionsContextType | undefined>(undefined);
@@ -21,7 +21,7 @@ export function DirectionsProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
         useState<google.maps.DirectionsService | null>(null);
-    const [routes, setRoutes] = useState<google.maps.DirectionsRoute[]>([]);
+    const [routes, setRoutes] = useState<RouteWithSafety[]>([]);
     const [selectedRouteIndex, setSelectedRouteIndex] = useState(0);
 
     const map = useMap();
@@ -40,11 +40,11 @@ export function DirectionsProvider({ children }: { children: ReactNode }) {
             setError(null);
 
             try {
-                const resultsApi = await fetch(
+                const result = await fetch(
                     `http://localhost:3021/api/v1/routes?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}`
                 ).then((res) => res.json());
 
-                setRoutes(resultsApi.data.routes);
+                setRoutes(result.data.routes || []);
                 setSelectedRouteIndex(0);
             } catch (err) {
                 console.error("Error calculating directions:", err);

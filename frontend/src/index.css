@@ -1,6 +1,21 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Menyembunyikan link "Terms of Use" */
+.gm-style-cc a {
+    display: none !important;
+}
+
+/* Menyembunyikan seluruh container copyright dan data peta */
+.gmnoprint a, .gmnoprint span, .gm-style-cc {
+    display: none !important;
+}
+
+/* Menyembunyikan tombol shortcut 'Logistik dan Bisnis' */
+button[aria-label="Open this area in Google Maps (opens a new window)"] {
+    display: none !important;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

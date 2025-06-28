@@ -4,6 +4,7 @@ import { useDirections } from "@/contexts/DirectionsContext";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useEffect } from "react";
+import { getRouteColor } from "@/lib/utils";
 
 export const DirectionsPage = () => {
     const navigate = useNavigate();
@@ -40,11 +41,6 @@ export const DirectionsPage = () => {
         setSelectedRouteIndex(index);
     };
 
-    const getRouteColor = (index: number) => {
-        const colors = ["#4285F4", "#EA4335", "#FBBC05", "#34A853", "#673AB7"];
-        return colors[index % colors.length];
-    };
-
     return (
         <>
             {/* Header */}
@@ -72,7 +68,7 @@ export const DirectionsPage = () => {
                                         : "bg-white text-gray-700"
                                 }`}
                                 style={{
-                                    border: `2px solid ${getRouteColor(index)}`,
+                                    border: `2px solid ${getRouteColor(route.safety_level)}`,
                                 }}
                             >
                                 Route {index + 1} • {route.legs[0]?.distance?.text} •{" "}
