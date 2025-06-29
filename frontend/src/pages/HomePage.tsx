@@ -20,8 +20,11 @@ export const HomePage = () => {
     };
 
     return (
-        <div className="absolute bottom-6 left-4 right-4 z-10">
-            <div className="flex flex-col gap-y-2">
+        <>
+            <div className="absolute top-6 left-4 right-4 z-10">
+                <SMSearchBar value="" onFocus={handleSearchClick} readOnly={true} />
+            </div>
+            <div className="absolute bottom-6 left-4 right-4 z-10">
                 <div className="flex flex-col items-end gap-y-2">
                     <Button
                         variant="outline"
@@ -41,9 +44,8 @@ export const HomePage = () => {
                     </Button>
                     <SMLocationButton />
                 </div>
-                <SMSearchBar value="" onFocus={handleSearchClick} readOnly={true} />
             </div>
-        </div>
+        </>
     );
 };
 
