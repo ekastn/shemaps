@@ -6,6 +6,7 @@ import { APIProvider } from "@vis.gl/react-google-maps";
 import { LocationProvider } from "./contexts/LocationContext.tsx";
 import { DirectionsProvider } from "./contexts/DirectionsContext.tsx";
 import { SafetyReportProvider } from "./contexts/SafetyReportContext.tsx";
+import { AuthProvider } from "./contexts/AuthContext.tsx";
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
@@ -14,13 +15,15 @@ const router = createBrowserRouter([
         path: "*",
         element: (
             <APIProvider apiKey={apiKey} libraries={["places"]}>
-                <LocationProvider>
-                    <DirectionsProvider>
-                        <SafetyReportProvider>
-                            <App />
-                        </SafetyReportProvider>
-                    </DirectionsProvider>
-                </LocationProvider>
+                <AuthProvider>
+                    <LocationProvider>
+                        <DirectionsProvider>
+                            <SafetyReportProvider>
+                                <App />
+                            </SafetyReportProvider>
+                        </DirectionsProvider>
+                    </LocationProvider>
+                </AuthProvider>
             </APIProvider>
         ),
     },

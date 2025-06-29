@@ -1,50 +1,33 @@
-
 import type { EmergencyContact } from "@/lib/types";
+import { authenticatedFetch } from "@/lib/api";
 
 const API_URL = "http://localhost:3021/api/v1";
 
-export const getEmergencyContacts = async (token: string): Promise<EmergencyContact[]> => {
-    const response = await fetch(`${API_URL}/contacts`, {
-        headers: {
-            "Authorization": `Bearer ${token}`,
-        },
+export const getEmergencyContacts = async (token: string | null, deviceId: string | null): Promise<EmergencyContact[]> => {
+    const result = await authenticatedFetch(`${API_URL}/contacts`, {
+        token,
+        deviceId,
     });
-
-    if (!response.ok) {
-        throw new Error("Failed to fetch emergency contacts");
-    }
-
-    const result = await response.json();
     return result.data;
 };
 
-export const createEmergencyContact = async (token: string, contact: { contact_name: string; phone_number: string }): Promise<EmergencyContact> => {
-    const response = await fetch(`${API_URL}/contacts`, {
+export const createEmergencyContact = async (token: string | null, deviceId: string | null, contact: { contact_name: string; phone_number: string }): Promise<EmergencyContact> => {
+    const result = await authenticatedFetch(`${API_URL}/contacts`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(contact),
+        token,
+        deviceId,
     });
-
-    if (!response.ok) {
-        throw new Error("Failed to create emergency contact");
-    }
-
-    const result = await response.json();
     return result.data;
 };
 
-export const deleteEmergencyContact = async (token: string, contactId: string): Promise<void> => {
-    const response = await fetch(`${API_URL}/contacts/${contactId}`, {
+export const deleteEmergencyContact = async (token: string | null, deviceId: string | null, contactId: string): Promise<void> => {
+    await authenticatedFetch(`${API_URL}/contacts/${contactId}`, {
         method: "DELETE",
-        headers: {
-            "Authorization": `Bearer ${token}`,
-        },
+        token,
+        deviceId,
     });
-
-    if (!response.ok) {
-        throw new Error("Failed to delete emergency contact");
-    }
 };

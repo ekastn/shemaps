@@ -9,10 +9,12 @@ import {
     createEmergencyContact,
     deleteEmergencyContact,
 } from "@/services/emergencyContactService";
+import { useAuth } from "@/contexts/AuthContext";
 import type { EmergencyContact } from "@/lib/types";
 
 const EmergencyContactsPage = () => {
     const navigate = useNavigate();
+    const { jwtToken, deviceId } = useAuth();
     const [contacts, setContacts] = useState<EmergencyContact[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -27,7 +29,7 @@ const EmergencyContactsPage = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const data = await getEmergencyContacts("mock-token");
+            const data = await getEmergencyContacts(jwtToken, deviceId);
             console.log(data);
             setContacts(data);
         } catch (err) {
@@ -39,8 +41,10 @@ const EmergencyContactsPage = () => {
     };
 
     useEffect(() => {
-        fetchContacts();
-    }, []);
+        if (deviceId) { // Only fetch if deviceId is available
+            fetchContacts();
+        }
+    }, [jwtToken, deviceId]);
 
     const handleAddContact = async () => {
         if (!newContactName || !newContactPhone) {
@@ -50,7 +54,7 @@ const EmergencyContactsPage = () => {
         setIsLoading(true);
         setError(null);
         try {
-            await createEmergencyContact("mock-token", {
+            await createEmergencyContact(jwtToken, deviceId, {
                 contact_name: newContactName,
                 phone_number: newContactPhone,
             });
@@ -69,7 +73,7 @@ const EmergencyContactsPage = () => {
         setIsLoading(true);
         setError(null);
         try {
-            await deleteEmergencyContact("mock-token", contactId);
+            await deleteEmergencyContact(jwtToken, deviceId, contactId);
             fetchContacts(); // Re-fetch contacts after deleting
         } catch (err) {
             setError("Failed to delete emergency contact.");

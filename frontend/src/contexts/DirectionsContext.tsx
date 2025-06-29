@@ -1,6 +1,8 @@
 import type { Coordinate, RouteWithSafety } from "@/lib/types";
 import { useMap } from "@vis.gl/react-google-maps";
 import { createContext, type ReactNode, useCallback, useContext, useState } from "react";
+import { authenticatedFetch } from "@/lib/api";
+import { useAuth } from "./AuthContext";
 
 interface DirectionsContextType {
     isLoading: boolean;
@@ -20,11 +22,11 @@ const DirectionsContext = createContext<DirectionsContextType | undefined>(undef
 export function DirectionsProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-        useState<google.maps.DirectionsService | null>(null);
     const [routes, setRoutes] = useState<RouteWithSafety[]>([]);
     const [selectedRouteIndex, setSelectedRouteIndex] = useState(0);
 
     const map = useMap();
+    const { jwtToken, deviceId } = useAuth();
 
     const calculateRoute = useCallback(
         async (
@@ -40,20 +42,21 @@ export function DirectionsProvider({ children }: { children: ReactNode }) {
             setError(null);
 
             try {
-                const result = await fetch(
-                    `http://localhost:3021/api/v1/routes?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}`
-                ).then((res) => res.json());
+                const result = await authenticatedFetch(
+                    `http://localhost:3021/api/v1/routes?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}`,
+                    { token: jwtToken, deviceId: deviceId }
+                );
 
                 setRoutes(result.data.routes || []);
                 setSelectedRouteIndex(0);
-            } catch (err) {
+            } catch (err: any) {
                 console.error("Error calculating directions:", err);
-                setError("Failed to calculate directions");
+                setError(err.message || "Failed to calculate directions");
             } finally {
                 setIsLoading(false);
             }
         },
-        [map]
+        [map, jwtToken, deviceId]
     );
 
     const clearDirections = useCallback(() => {

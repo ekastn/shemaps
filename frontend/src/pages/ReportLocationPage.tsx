@@ -7,11 +7,13 @@ import { submitSafetyReport } from '@/services/reportService';
 import { useSafetyReports } from "@/contexts/SafetyReportContext";
 import { useLocation } from "@/contexts/LocationContext";
 import { useMap } from "@vis.gl/react-google-maps";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const ReportLocationPage = () => {
     const navigate = useNavigate();
     const { fetchReportsInBounds } = useSafetyReports();
     const { selectedLocation } = useLocation();
+    const { jwtToken, deviceId } = useAuth();
     const map = useMap();
     
     const [safetyLevel, setSafetyLevel] = useState<"DANGEROUS" | "CAUTIOUS" | "SAFE">("DANGEROUS");
@@ -52,7 +54,7 @@ export const ReportLocationPage = () => {
             const coordinate = selectedLocation.coordinate!;
             
             // Create a new report
-            await submitSafetyReport({
+            await submitSafetyReport(jwtToken, deviceId, {
                 latitude: coordinate.lat,
                 longitude: coordinate.lng,
                 safety_level: safetyLevel,

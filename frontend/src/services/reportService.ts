@@ -1,4 +1,5 @@
 import type { SafetyReport } from "@/lib/types";
+import { authenticatedFetch } from "@/lib/api";
 
 interface CreateReportPayload {
     latitude: number;
@@ -8,19 +9,15 @@ interface CreateReportPayload {
     description: string;
 }
 
-export const submitSafetyReport = async (payload: CreateReportPayload): Promise<SafetyReport> => {
-    const response = await fetch("http://localhost:3021/api/v1/reports", {
+export const submitSafetyReport = async (token: string | null, deviceId: string | null, payload: CreateReportPayload): Promise<SafetyReport> => {
+    const result = await authenticatedFetch("http://localhost:3021/api/v1/reports", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
+        token,
+        deviceId,
     });
-
-    if (!response.ok) {
-        throw new Error("Gagal mengirim laporan");
-    }
-
-    const result = await response.json();
     return result.data;
 };
