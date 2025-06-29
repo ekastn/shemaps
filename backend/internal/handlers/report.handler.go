@@ -2,11 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/ekastn/shemaps/backend/internal/dto"
+	"github.com/ekastn/shemaps/backend/internal/middleware"
 	"github.com/ekastn/shemaps/backend/internal/services"
 	"github.com/ekastn/shemaps/backend/internal/utils"
 	"github.com/google/uuid"
@@ -30,12 +30,21 @@ func (h *ReportHandler) CreateReport(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// FIXME: UserID should be extracted from JWT token
-	userID, _ := uuid.Parse("18d5b573-9a8c-4fdc-a381-cf18dd574a49")
+	userID, ok := middleware.GetUserIDFromContext(r.Context())
+	if !ok {
+		utils.Error(w, http.StatusUnauthorized, "Unauthorized", "User ID not found in context")
+		return
+	}
+
+	parsedUserID, ok := userID.(uuid.UUID)
+	if !ok {
+		utils.Error(w, http.StatusInternalServerError, "Internal Server Error", "Failed to parse user ID")
+		return
+	}
 
 	report, err := h.reportService.CreateReport(
 		r.Context(),
-		userID,
+		parsedUserID,
 		req.Latitude,
 		req.Longitude,
 		req.SafetyLevel,
@@ -71,15 +80,11 @@ func (h *ReportHandler) FindReports(w http.ResponseWriter, r *http.Request) {
 		West:  west,
 	}
 
-	log.Println("Finding reports in bounds:", arg)
-
 	reports, err := h.reportService.FindNearbyReports(r.Context(), arg)
 	if err != nil {
 		utils.Error(w, http.StatusInternalServerError, "internal_error", "Failed to find reports")
 		return
 	}
-
-	log.Println("Found reports:", reports)
 
 	utils.Success(w, http.StatusOK, dto.NewReportListResponse(reports))
 }

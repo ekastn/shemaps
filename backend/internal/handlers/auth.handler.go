@@ -38,8 +38,8 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := services.RegisterUserParams{
-		FullName: req.FullName,
-		Email:    req.Email,
+		FullName: &req.FullName,
+		Email:    &req.Email,
 		Password: req.Password,
 	}
 
@@ -75,7 +75,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := services.LoginUserParams{
-		Email:    req.Email,
+		Email:    &req.Email,
 		Password: req.Password,
 	}
 

@@ -54,10 +54,10 @@ type ArgFindReports struct {
 
 func (s *ReportService) FindNearbyReports(ctx context.Context, arg ArgFindReports) ([]store.SafetyReport, error) {
 	params := store.FindReportsInBoundsParams{
-		North:        arg.North,
-		South:        arg.South,
-		East:         arg.East,
-		West:         arg.West,
+		North: arg.North,
+		South: arg.South,
+		East:  arg.East,
+		West:  arg.West,
 	}
 
 	reports, err := s.store.FindReportsInBounds(ctx, params)

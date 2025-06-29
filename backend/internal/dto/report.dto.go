@@ -33,8 +33,8 @@ func NewReportResponse(report store.SafetyReport) ReportResponse {
 	return ReportResponse{
 		ID:          report.ID,
 		UserID:      report.ReporterUserID,
-		Latitude:    report.Location.Y,
-		Longitude:   report.Location.X,
+		Latitude:    report.Latitude,
+		Longitude:   report.Longitude,
 		SafetyLevel: report.SafetyLevel,
 		Tags:        report.Tags,
 		Description: *report.Description,

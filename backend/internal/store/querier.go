@@ -12,13 +12,16 @@ import (
 
 type Querier interface {
 	CreateEmergencyContact(ctx context.Context, arg CreateEmergencyContactParams) (EmergencyContact, error)
+	CreateGuestUser(ctx context.Context, deviceID uuid.UUID) (User, error)
 	CreateSafetyReport(ctx context.Context, arg CreateSafetyReportParams) (SafetyReport, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteEmergencyContact(ctx context.Context, arg DeleteEmergencyContactParams) error
 	FindReportsInBounds(ctx context.Context, arg FindReportsInBoundsParams) ([]SafetyReport, error)
 	GetEmergencyContactsByUser(ctx context.Context, userID uuid.UUID) ([]EmergencyContact, error)
-	GetUserByEmail(ctx context.Context, email string) (User, error)
+	GetUserByDeviceID(ctx context.Context, deviceID uuid.UUID) (User, error)
+	GetUserByEmail(ctx context.Context, email *string) (User, error)
 	GetUserByID(ctx context.Context, id uuid.UUID) (User, error)
+	UpgradeGuestUser(ctx context.Context, arg UpgradeGuestUserParams) (User, error)
 }
 
 var _ Querier = (*Queries)(nil)

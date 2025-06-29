@@ -34,8 +34,10 @@ type SafetyReport struct {
 
 type User struct {
 	ID           uuid.UUID `json:"id"`
-	FullName     string    `json:"full_name"`
-	Email        string    `json:"email"`
-	PasswordHash string    `json:"password_hash"`
+	FullName     *string   `json:"full_name"`
+	Email        *string   `json:"email"`
+	PasswordHash *string   `json:"password_hash"`
 	CreatedAt    time.Time `json:"created_at"`
+	Status       string    `json:"status"`
+	DeviceID     uuid.UUID `json:"device_id"`
 }

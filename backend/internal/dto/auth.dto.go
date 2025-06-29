@@ -39,8 +39,8 @@ type AuthResponse struct {
 func NewUserResponse(user store.User) UserResponse {
 	return UserResponse{
 		ID:        user.ID,
-		FullName:  user.FullName,
-		Email:     user.Email,
+		FullName:  *user.FullName,
+		Email:     *user.Email,
 		CreatedAt: user.CreatedAt,
 	}
 }

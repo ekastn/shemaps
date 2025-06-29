@@ -40,10 +40,10 @@ func (s *RouteService) CalculateSafeRoutes(ctx context.Context, origin, destinat
 	}
 
 	params := store.FindReportsInBoundsParams{
-		North:        overallBounds.NorthEast.Lat,
-		South:        overallBounds.SouthWest.Lat,
-		East:         overallBounds.NorthEast.Lng,
-		West:         overallBounds.SouthWest.Lng,
+		North: overallBounds.NorthEast.Lat,
+		South: overallBounds.SouthWest.Lat,
+		East:  overallBounds.NorthEast.Lng,
+		West:  overallBounds.SouthWest.Lng,
 	}
 
 	dangerReports, err := s.store.FindReportsInBounds(ctx, params)
@@ -78,7 +78,7 @@ func (s *RouteService) CalculateSafeRoutes(ctx context.Context, origin, destinat
 				// 100 meter near the route
 				if distance < 100 {
 					isNearRoute = true
-					break 
+					break
 				}
 			}
 

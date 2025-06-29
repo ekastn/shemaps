@@ -21,14 +21,14 @@ type AuthService struct {
 }
 
 type RegisterUserParams struct {
-	FullName string `json:"full_name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	FullName *string `json:"full_name"`
+	Email    *string `json:"email"`
+	Password string  `json:"password"`
 }
 
 type LoginUserParams struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    *string `json:"email"`
+	Password string  `json:"password"`
 }
 
 type AuthResponse struct {
@@ -57,7 +57,7 @@ func (s *AuthService) Register(ctx context.Context, params RegisterUserParams) (
 	user, err := s.store.CreateUser(ctx, store.CreateUserParams{
 		FullName:     params.FullName,
 		Email:        params.Email,
-		PasswordHash: passwordHash,
+		PasswordHash: &passwordHash,
 	})
 	if err != nil {
 		return nil, err
@@ -80,7 +80,7 @@ func (s *AuthService) Login(ctx context.Context, params LoginUserParams) (*AuthR
 		return nil, ErrInvalidCredentials
 	}
 
-	if !auth.CheckPasswordHash(params.Password, user.PasswordHash) {
+	if !auth.CheckPasswordHash(params.Password, *user.PasswordHash) {
 		return nil, ErrInvalidCredentials
 	}
 
@@ -101,4 +101,12 @@ func (s *AuthService) ValidateToken(tokenString string) (uuid.UUID, error) {
 
 func (s *AuthService) GetUserByID(ctx context.Context, userID uuid.UUID) (store.User, error) {
 	return s.store.GetUserByID(ctx, userID)
+}
+
+func (s *AuthService) GetUserByDeviceID(ctx context.Context, deviceID uuid.UUID) (store.User, error) {
+	return s.store.GetUserByDeviceID(ctx, deviceID)
+}
+
+func (s *AuthService) CreateGuestUser(ctx context.Context, deviceID uuid.UUID) (store.User, error) {
+	return s.store.CreateGuestUser(ctx, deviceID)
 }
