@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/ekastn/shemaps/backend/internal/middleware"
 	"github.com/ekastn/shemaps/backend/internal/services"
 	"github.com/ekastn/shemaps/backend/internal/utils"
+	"github.com/google/uuid"
 )
 
 type AuthHandler struct {
@@ -97,4 +99,23 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.Success(w, http.StatusOK, response)
+}
+
+func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
+	userID, ok := middleware.GetUserIDFromContext(r.Context())
+	if !ok {
+		utils.Error(w, http.StatusUnauthorized, "Unauthorized", "Missing or invalid authorization token")
+		return
+	}
+
+	user, err := h.authService.GetUserByID(r.Context(), userID.(uuid.UUID))
+	if err != nil {
+		utils.Error(w, http.StatusInternalServerError, "Internal Server Error", "Failed to get user")
+		return
+	}
+
+	// Hide the password hash in the response
+	user.PasswordHash = ""
+
+	utils.Success(w, http.StatusOK, user)
 }

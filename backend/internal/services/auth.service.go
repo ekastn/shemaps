@@ -98,3 +98,7 @@ func (s *AuthService) Login(ctx context.Context, params LoginUserParams) (*AuthR
 func (s *AuthService) ValidateToken(tokenString string) (uuid.UUID, error) {
 	return auth.ValidateJWT(tokenString, s.config.JWTSecret)
 }
+
+func (s *AuthService) GetUserByID(ctx context.Context, userID uuid.UUID) (store.User, error) {
+	return s.store.GetUserByID(ctx, userID)
+}

@@ -9,6 +9,8 @@ import (
 	"syscall"
 	"time"
 
+	custommiddleware "github.com/ekastn/shemaps/backend/internal/middleware"
+
 	"github.com/ekastn/shemaps/backend/internal/config"
 	"github.com/ekastn/shemaps/backend/internal/handlers"
 	"github.com/ekastn/shemaps/backend/internal/services"
@@ -125,6 +127,12 @@ func mount(h *handlers.Handlers) http.Handler {
 		r.Route("/auth", func(r chi.Router) {
 			r.Post("/register", h.Auth.Register)
 			r.Post("/login", h.Auth.Login)
+
+			r.Group(func(r chi.Router) {
+				authMiddleware := custommiddleware.Authenticate(h.Auth.GetAuthService())
+				r.Use(authMiddleware)
+				r.Get("/me", h.Auth.Me)
+			})
 		})
 
 		r.Get("/routes", h.Directions.GetDirections)
