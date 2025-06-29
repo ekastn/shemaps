@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/ekastn/shemaps/backend/internal/dto"
 	"github.com/ekastn/shemaps/backend/internal/middleware"
 	"github.com/ekastn/shemaps/backend/internal/services"
 	"github.com/ekastn/shemaps/backend/internal/utils"
@@ -25,15 +26,21 @@ func (h *AuthHandler) GetAuthService() *services.AuthService {
 }
 
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
-	var params services.RegisterUserParams
-	if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
+	var req dto.RegisterRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		utils.Error(w, http.StatusBadRequest, "Bad Request", "Invalid request body")
 		return
 	}
 
-	if params.Email == "" || params.Password == "" || params.FullName == "" {
+	if req.Email == "" || req.Password == "" || req.FullName == "" {
 		utils.Error(w, http.StatusBadRequest, "Bad Request", "Email, password, and full name are required")
 		return
+	}
+
+	params := services.RegisterUserParams{
+		FullName: req.FullName,
+		Email:    req.Email,
+		Password: req.Password,
 	}
 
 	auth, err := h.authService.Register(r.Context(), params)
@@ -47,15 +54,8 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Hide the password hash in the response
-	userResponse := auth.User
-	userResponse.PasswordHash = ""
-
-	response := struct {
-		User  interface{} `json:"user"`
-		Token string      `json:"token"`
-	}{
-		User:  userResponse,
+	response := dto.AuthResponse{
+		User:  dto.NewUserResponse(auth.User),
 		Token: auth.Token,
 	}
 
@@ -63,16 +63,20 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
-	var params services.LoginUserParams
-	if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
+	var req dto.LoginRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		utils.Error(w, http.StatusBadRequest, "Bad Request", "Invalid request body")
 		return
 	}
 
-	// Basic validation
-	if params.Email == "" || params.Password == "" {
+	if req.Email == "" || req.Password == "" {
 		utils.Error(w, http.StatusBadRequest, "Bad Request", "Email and password are required")
 		return
+	}
+
+	params := services.LoginUserParams{
+		Email:    req.Email,
+		Password: req.Password,
 	}
 
 	auth, err := h.authService.Login(r.Context(), params)
@@ -86,15 +90,8 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Hide the password hash in the response
-	userResponse := auth.User
-	userResponse.PasswordHash = ""
-
-	response := struct {
-		User  interface{} `json:"user"`
-		Token string      `json:"token"`
-	}{
-		User:  userResponse,
+	response := dto.AuthResponse{
+		User:  dto.NewUserResponse(auth.User),
 		Token: auth.Token,
 	}
 
@@ -114,8 +111,5 @@ func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Hide the password hash in the response
-	user.PasswordHash = ""
-
-	utils.Success(w, http.StatusOK, user)
+	utils.Success(w, http.StatusOK, dto.NewUserResponse(user))
 }

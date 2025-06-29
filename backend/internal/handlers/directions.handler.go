@@ -3,26 +3,26 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/ekastn/shemaps/backend/internal/dto"
 	"github.com/ekastn/shemaps/backend/internal/services"
 	"github.com/ekastn/shemaps/backend/internal/utils"
 )
 
 type DirectionsHandler struct {
-	mapsService *services.MapsService
+	mapsService  *services.MapsService
 	routeService *services.RouteService
 }
 
 func NewDirectionsHandler(mapsService *services.MapsService, routeService *services.RouteService) *DirectionsHandler {
 	return &DirectionsHandler{
-		mapsService: mapsService,
-        routeService: routeService,
+		mapsService:  mapsService,
+		routeService: routeService,
 	}
 }
 
 func (h *DirectionsHandler) GetDirections(w http.ResponseWriter, r *http.Request) {
 	origin := r.URL.Query().Get("origin")
 	destination := r.URL.Query().Get("destination")
-	// travelMode := r.URL.Query().Get("mode")
 
 	if origin == "" || destination == "" {
 		utils.Error(w, http.StatusBadRequest, "bad_request", "Origin and destination are required")
@@ -35,10 +35,7 @@ func (h *DirectionsHandler) GetDirections(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	// if status != "OK" {
-	// 	utils.Error(w, http.StatusBadRequest, "no_route", "Could not find a route between the specified locations")
-	// 	return
-	// }
+	response := dto.DirectionsResponse{Routes: routes}
 
-	utils.Success(w, http.StatusOK, map[string]interface{}{"routes": routes})
+	utils.Success(w, http.StatusOK, response)
 }

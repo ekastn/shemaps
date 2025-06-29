@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/ekastn/shemaps/backend/internal/dto"
 	"github.com/ekastn/shemaps/backend/internal/services"
 	"github.com/ekastn/shemaps/backend/internal/utils"
 	"github.com/google/uuid"
@@ -22,15 +23,9 @@ func NewReportHandler(reportService *services.ReportService) *ReportHandler {
 }
 
 func (h *ReportHandler) CreateReport(w http.ResponseWriter, r *http.Request) {
-	var reqBody struct {
-		Latitude    float64  `json:"latitude"`
-		Longitude   float64  `json:"longitude"`
-		SafetyLevel string   `json:"safety_level"`
-		Tags        []string `json:"tags"`
-		Description string   `json:"description"`
-	}
+	var req dto.CreateReportRequest
 
-	if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		utils.Error(w, http.StatusBadRequest, "bad_request", "Invalid request body")
 		return
 	}
@@ -41,18 +36,18 @@ func (h *ReportHandler) CreateReport(w http.ResponseWriter, r *http.Request) {
 	report, err := h.reportService.CreateReport(
 		r.Context(),
 		userID,
-		reqBody.Latitude,
-		reqBody.Longitude,
-		reqBody.SafetyLevel,
-		reqBody.Tags,
-		reqBody.Description,
+		req.Latitude,
+		req.Longitude,
+		req.SafetyLevel,
+		req.Tags,
+		req.Description,
 	)
 	if err != nil {
 		utils.Error(w, http.StatusInternalServerError, "internal_error", err.Error())
 		return
 	}
 
-	utils.Success(w, http.StatusCreated, report)
+	utils.Success(w, http.StatusCreated, dto.NewReportResponse(report))
 }
 
 func (h *ReportHandler) FindReports(w http.ResponseWriter, r *http.Request) {
@@ -86,5 +81,5 @@ func (h *ReportHandler) FindReports(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("Found reports:", reports)
 
-	utils.Success(w, http.StatusOK, reports)
+	utils.Success(w, http.StatusOK, dto.NewReportListResponse(reports))
 }
