@@ -11,6 +11,14 @@ import (
 	"github.com/google/uuid"
 )
 
+type EmergencyContact struct {
+	ID          uuid.UUID `json:"id"`
+	UserID      uuid.UUID `json:"user_id"`
+	ContactName string    `json:"contact_name"`
+	PhoneNumber string    `json:"phone_number"`
+	CreatedAt   time.Time `json:"created_at"`
+}
+
 type SafetyReport struct {
 	ID                 uuid.UUID        `json:"id"`
 	ReporterUserID     uuid.UUID        `json:"reporter_user_id"`

@@ -7,18 +7,21 @@ import (
 )
 
 type Handlers struct {
-	Directions *DirectionsHandler
-	Report     *ReportHandler
-	Auth       *AuthHandler
+	Directions       *DirectionsHandler
+	Report           *ReportHandler
+	Auth             *AuthHandler
+	EmergencyContact *EmergencyContactHandler
 }
 
 func NewHandlers(mapsService *services.MapsService, reportService services.ReportService, store *store.Queries, config *config.Config) *Handlers {
 	authService := services.NewAuthService(store, config)
 	routeService := services.NewRouteService(mapsService, store)
+	emergencyContactService := services.NewEmergencyContactService(store)
 
 	return &Handlers{
-		Directions: NewDirectionsHandler(mapsService, routeService),
-		Report:     NewReportHandler(&reportService),
-		Auth:       NewAuthHandler(authService),
+		Directions:       NewDirectionsHandler(mapsService, routeService),
+		Report:           NewReportHandler(&reportService),
+		Auth:             NewAuthHandler(authService),
+		EmergencyContact: NewEmergencyContactHandler(emergencyContactService),
 	}
 }

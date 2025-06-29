@@ -135,6 +135,15 @@ func mount(h *handlers.Handlers) http.Handler {
 			})
 		})
 
+		r.Group(func(r chi.Router) {
+			authMiddleware := custommiddleware.Authenticate(h.Auth.GetAuthService())
+			r.Use(authMiddleware)
+
+			r.Get("/contacts", h.EmergencyContact.GetContacts)
+			r.Post("/contacts", h.EmergencyContact.CreateContact)
+			r.Delete("/contacts/{contactID}", h.EmergencyContact.DeleteContact)
+		})
+
 		r.Get("/routes", h.Directions.GetDirections)
 
 		r.Post("/reports", h.Report.CreateReport)
