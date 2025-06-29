@@ -2,7 +2,7 @@ import { useNavigate } from "react-router";
 import { SMLocationButton } from "@/components/maps/SMLocationButton";
 import { SMSearchBar } from "@/components/SMSearch/SMSearchBar";
 import { Button } from "@/components/ui/button";
-import { MapPin } from "lucide-react";
+import { MapPin, Users } from "lucide-react";
 
 export const HomePage = () => {
     const navigate = useNavigate();
@@ -13,6 +13,10 @@ export const HomePage = () => {
 
     const handlePinClick = () => {
         navigate("/pin");
+    };
+
+    const handleEmergencyContactsClick = () => {
+        navigate("/contacts");
     };
 
     return (
@@ -26,6 +30,14 @@ export const HomePage = () => {
                         className="bg-white shadow-md rounded-full"
                     >
                         <MapPin className="h-5 w-5" />
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={handleEmergencyContactsClick}
+                        className="bg-white shadow-md rounded-full"
+                    >
+                        <Users className="h-5 w-5" />
                     </Button>
                     <SMLocationButton />
                 </div>

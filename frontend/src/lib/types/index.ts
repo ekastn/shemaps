@@ -51,3 +51,11 @@ export interface RouteWithSafety extends google.maps.DirectionsRoute {
     safety_level: "DANGEROUS" | "CAUTIOUS" | "SAFE";
     danger_score: number;
 }
+
+export interface EmergencyContact {
+    id: string;
+    user_id: string;
+    contact_name: string;
+    phone_number: string;
+    created_at: string;
+}

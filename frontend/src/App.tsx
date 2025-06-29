@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router";
 import { SMMap } from "@/components/maps/SMMap";
 import { useLocation } from "@/contexts/LocationContext";
-import { HomePage, SearchPage, PinOnMapPage, PlaceInfoPage, DirectionsPage } from "@/pages";
+import { HomePage, SearchPage, PinOnMapPage, PlaceInfoPage, DirectionsPage, EmergencyContactsPage } from "@/pages";
 import { ReportLocationPage } from "./pages/ReportLocationPage";
 
 export default function App() {
@@ -26,6 +26,7 @@ export default function App() {
                 <Route path="/place/:id" element={<PlaceInfoPage />} />
                 <Route path="/report" element={<ReportLocationPage />} />
                 <Route path="/directions" element={<DirectionsPage />} />
+                <Route path="/contacts" element={<EmergencyContactsPage />} />
             </Routes>
         </div>
     );

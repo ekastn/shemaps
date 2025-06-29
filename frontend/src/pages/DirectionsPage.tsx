@@ -2,18 +2,24 @@ import { useNavigate } from "react-router";
 import { useLocation } from "@/contexts/LocationContext";
 import { useDirections } from "@/contexts/DirectionsContext";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, CircleDot, MapPin, MoreVertical, ArrowUpDown, X } from "lucide-react";
 import { useEffect } from "react";
 import { getRouteColor } from "@/lib/utils";
+import { useMap } from "@vis.gl/react-google-maps";
 
 export const DirectionsPage = () => {
     const navigate = useNavigate();
     const { currentCoordinate, selectedLocation } = useLocation();
 
-    const { routes, calculateRoute, isLoading, error, selectedRouteIndex, setSelectedRouteIndex } =
-        useDirections();
-
-    console.log("error:", error);
+    const {
+        routes,
+        calculateRoute,
+        isLoading,
+        error,
+        selectedRouteIndex,
+        setSelectedRouteIndex,
+        clearDirections,
+    } = useDirections();
 
     // Calculate route when component mounts or travel mode changes
     useEffect(() => {
@@ -28,12 +34,26 @@ export const DirectionsPage = () => {
         }
     }, [currentCoordinate, selectedLocation, calculateRoute, navigate]);
 
+    const map = useMap();
+
+    useEffect(() => {
+        if (map && routes.length > 0) {
+            const bounds = new google.maps.LatLngBounds(
+                (routes[selectedRouteIndex].bounds as any).southwest,
+                (routes[selectedRouteIndex].bounds as any).northeast
+            );
+            map.fitBounds(bounds);
+        }
+    }, [map, routes, selectedRouteIndex]);
+
     if (!selectedLocation) {
+        clearDirections();
         navigate("/");
         return null;
     }
 
     const handleBack = () => {
+        clearDirections();
         navigate(-1);
     };
 
@@ -44,31 +64,41 @@ export const DirectionsPage = () => {
     return (
         <>
             {/* Header */}
-            <div className="absolute top-0 left-0 right-0 z-10 bg-white p-4 border-b border-gray-200">
-                <div className="flex items-center space-x-4">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleBack}
-                        className="flex-shrink-0"
-                    >
-                        <ArrowLeft className="h-5 w-5" />
-                    </Button>
-                    <p className="text-sm">{selectedLocation.name}</p>
+            <div className="relative z-10 p-4">
+                {/* Top component */}
+                <div className="bg-white rounded-xl shadow-lg p-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex-grow ml-4">
+                            <div className="flex items-center space-x-2">
+                                <CircleDot className="h-4 w-4 text-blue-500" />
+                                <p className="text-sm font-medium text-blue-700">Your location</p>
+                            </div>
+                            <div className="border-l-2 border-gray-300 h-4 ml-2"></div>
+                            <div className="flex items-center space-x-2">
+                                <MapPin className="h-4 w-4 text-red-500" />
+                                <p className="text-sm font-medium text-gray-800">
+                                    {selectedLocation.name}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                {routes && routes.length > 1 && (
-                    <div className="flex overflow-x-auto p-2 space-x-2">
+
+                {routes.length > 1 && (
+                    <div className="mt-2 flex overflow-x-auto space-x-2 p-2">
                         {routes.map((route, index) => (
                             <button
                                 key={index}
                                 onClick={() => handleRouteSelect(index)}
-                                className={`px-3 py-2 rounded-full text-sm whitespace-nowrap ${
+                                className={`px-3 py-2 rounded-full text-sm whitespace-nowrap bg-white shadow-md transition-all ${
                                     selectedRouteIndex === index
-                                        ? "bg-blue-100 text-blue-800"
-                                        : "bg-white text-gray-700"
+                                        ? "border-2 border-blue-500 text-blue-800"
+                                        : "border border-gray-200 text-gray-700"
                                 }`}
                                 style={{
-                                    border: `2px solid ${getRouteColor(route.safety_level)}`,
+                                    border: `${
+                                        selectedRouteIndex === index ? "2px" : "1px"
+                                    } solid ${getRouteColor(route.safety_level)}`,
                                 }}
                             >
                                 Route {index + 1} • {route.legs[0]?.distance?.text} •{" "}
@@ -83,18 +113,20 @@ export const DirectionsPage = () => {
                 <div className="p-4">
                     {routes.length > 0 && (
                         <div className="space-y-4">
-                            Route Summary
-                            <div className="bg-blue-50 p-3 rounded-lg">
+                            <div className="p-3 rounded-lg">
                                 <div className="flex items-center justify-between">
-                                    <div>
-                                        <div className="font-medium">
-                                            {routes[selectedRouteIndex].legs[0].distance?.text}
-                                        </div>
-                                        <div className="text-sm text-gray-500">
-                                            {routes[selectedRouteIndex].legs[0].duration?.text}
-                                        </div>
+                                    <div className="font-medium text-lg">
+                                        {routes[selectedRouteIndex].legs[0].distance?.text} ({" "}
+                                        {routes[selectedRouteIndex].legs[0].duration?.text})
                                     </div>
-                                    <Button size="sm">Start</Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={handleBack}
+                                        className="flex-shrink-0 bg-gray-100"
+                                    >
+                                        <X className="h-5 w-5" />
+                                    </Button>
                                 </div>
                             </div>
                             <div className="space-y-3 max-h-[20vh] overflow-y-auto">
@@ -139,4 +171,3 @@ export const DirectionsPage = () => {
 };
 
 export default DirectionsPage;
-

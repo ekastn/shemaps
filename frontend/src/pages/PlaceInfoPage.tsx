@@ -3,6 +3,8 @@ import { useLocation } from "@/contexts/LocationContext";
 import { Button } from "@/components/ui/button";
 import { X, Navigation, Bookmark, TriangleAlert } from "lucide-react";
 import { useDirections } from "@/contexts/DirectionsContext";
+import { useEffect } from "react";
+import { useMap } from "@vis.gl/react-google-maps";
 
 interface PlaceInfoPageProps {
     isNewPlace?: boolean;
@@ -11,7 +13,15 @@ interface PlaceInfoPageProps {
 export const PlaceInfoPage = ({ isNewPlace = false }: PlaceInfoPageProps) => {
     const navigate = useNavigate();
     const { selectedLocation, setSelectedLocation } = useLocation();
-    const { clearDirections } = useDirections();
+
+    const map = useMap();
+
+    useEffect(() => {
+        if (map?.panTo && selectedLocation?.coordinate) {
+            map.panTo(selectedLocation.coordinate);
+            map.setZoom(16);
+        }
+    }, [selectedLocation, map]);
 
     if (!selectedLocation) {
         navigate("/");
@@ -19,7 +29,6 @@ export const PlaceInfoPage = ({ isNewPlace = false }: PlaceInfoPageProps) => {
     }
 
     const handleClose = () => {
-        clearDirections();
         setSelectedLocation(null);
         navigate("/");
     };
