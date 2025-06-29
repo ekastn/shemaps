@@ -11,6 +11,7 @@ interface LocationContextType {
     setCurrentCoordinate: (coord: Coordinate | null) => void;
     setSelectedLocation: (location: Location | null) => void;
     addToRecentSearches: (location: Location) => void;
+    panToCurrentLocation: () => void;
 }
 
 const LocationContext = createContext<LocationContextType | undefined>(undefined);
@@ -68,6 +69,12 @@ export function LocationProvider({ children }: { children: ReactNode }) {
         };
     }, [map]);
 
+    const panToCurrentLocation = () => {
+        if (map && currentCoordinate) {
+            map.panTo(currentCoordinate);
+        }
+    };
+
     const addToRecentSearches = (location: Location) => {
         setRecentSearches((prev) => {
             const newSearches = prev.filter((item) => item.placeId !== location.placeId);
@@ -84,6 +91,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
                 setCurrentCoordinate,
                 setSelectedLocation,
                 addToRecentSearches,
+                panToCurrentLocation,
             }}
         >
             {children}

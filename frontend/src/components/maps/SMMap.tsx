@@ -10,7 +10,6 @@ import { useSafetyReports } from "@/contexts/SafetyReportContext";
 
 type SMMapProps = {
     center: Coordinate;
-    zoom: number;
     className?: string;
     markerCoordinate?: Coordinate;
     // onClick?: (event: google.maps.MapMouseEvent) => void;

@@ -51,12 +51,14 @@ export const PinOnMapPage = () => {
                 </Button>
             </div>
 
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-full z-20 pointer-events-none">
-                <MapPin className="w-8 h-8 text-red-500" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full">
+                <div className="bg-blue-600 text-white p-2 rounded-full shadow-lg">
+                    <MapPin className="w-5 h-5" fill="currentColor" />
+                </div>
+                <div className="absolute bottom-0 left-1/2 w-3 h-3 bg-blue-600 transform -translate-x-1/2 translate-y-1/2 rotate-45"></div>
             </div>
         </>
     );
 };
 
 export default PinOnMapPage;
-
