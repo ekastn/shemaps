@@ -30,8 +30,8 @@ func (h *EmergencyContactHandler) GetContacts(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	parsedUserID, err := uuid.Parse(userID.(string))
-	if err != nil {
+	parsedUserID, ok := userID.(uuid.UUID)
+	if !ok {
 		utils.Error(w, http.StatusInternalServerError, "Internal Server Error", "Failed to parse user ID")
 		return
 	}
@@ -52,8 +52,8 @@ func (h *EmergencyContactHandler) CreateContact(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	parsedUserID, err := uuid.Parse(userID.(string))
-	if err != nil {
+	parsedUserID, ok := userID.(uuid.UUID)
+	if !ok {
 		utils.Error(w, http.StatusInternalServerError, "Internal Server Error", "Failed to parse user ID")
 		return
 	}
@@ -86,8 +86,8 @@ func (h *EmergencyContactHandler) DeleteContact(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	parsedUserID, err := uuid.Parse(userID.(string))
-	if err != nil {
+	parsedUserID, ok := userID.(uuid.UUID)
+	if !ok {
 		utils.Error(w, http.StatusInternalServerError, "Internal Server Error", "Failed to parse user ID")
 		return
 	}
