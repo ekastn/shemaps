@@ -20,7 +20,6 @@ export function LocationProvider({ children }: { children: ReactNode }) {
     const [currentCoordinate, setCurrentCoordinate] = useState<Coordinate | null>(null);
     const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
     const [recentSearches, setRecentSearches] = useState<Location[]>([]);
-    const [locationError, setLocationError] = useState<string | null>(null);
 
     const map = useMap();
     const navigate = useNavigate();
@@ -30,7 +29,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
             map.panTo(selectedLocation.coordinate);
             navigate(`/place/${selectedLocation?.id}`);
         }
-    }, [selectedLocation]);
+    }, [selectedLocation, map, navigate]);
 
     useEffect(() => {
         if (!navigator.geolocation) {
@@ -42,8 +41,6 @@ export function LocationProvider({ children }: { children: ReactNode }) {
             const { latitude, longitude } = position.coords;
             const newCoord = { lat: latitude, lng: longitude };
             setCurrentCoordinate(newCoord);
-            setLocationError(null);
-
             // if (map?.panTo) {
             //   map.panTo(newCoord);
             // }
@@ -51,7 +48,6 @@ export function LocationProvider({ children }: { children: ReactNode }) {
 
         const handleError = (error: GeolocationPositionError) => {
             console.error("Error getting location:", error);
-            setLocationError("Unable to retrieve your location");
         };
 
         // Request high accuracy if needed (uses more battery)

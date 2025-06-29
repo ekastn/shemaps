@@ -1,5 +1,5 @@
 import { SMSearchSuggestions } from "./SMSearchSuggestions";
-import type { Location, PlaceResult } from "@/lib/types";
+import type { Location } from "@/lib/types";
 
 interface SearchResultsProps {
     searchQuery: string;

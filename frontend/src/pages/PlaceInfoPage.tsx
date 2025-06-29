@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { useLocation } from "@/contexts/LocationContext";
 import { Button } from "@/components/ui/button";
-import { X, Navigation, Play, Bookmark, TriangleAlert } from "lucide-react";
+import { X, Navigation, Bookmark, TriangleAlert } from "lucide-react";
 import { useDirections } from "@/contexts/DirectionsContext";
 
 interface PlaceInfoPageProps {

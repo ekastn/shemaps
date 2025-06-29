@@ -16,7 +16,7 @@ export const SearchPage = () => {
     handleLocationSelect,
   } = usePlaces();
 
-  const handleSuggestionSelect = async (location: any) => {
+  const handleSuggestionSelect = async (location: Location) => {
     await handleLocationSelect(location);
   };
 

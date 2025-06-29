@@ -26,7 +26,7 @@ export const DirectionsPage = () => {
         } else {
             navigate(-1);
         }
-    }, [currentCoordinate, selectedLocation, calculateRoute]);
+    }, [currentCoordinate, selectedLocation, calculateRoute, navigate]);
 
     if (!selectedLocation) {
         navigate("/");
