@@ -1,9 +1,13 @@
+const apiURL = import.meta.env.VITE_API_URL;
+
 interface AuthenticatedFetchOptions extends RequestInit {
     token?: string | null;
     deviceId?: string | null;
 }
 
-export const authenticatedFetch = async (url: string, options: AuthenticatedFetchOptions = {}) => {
+export const authenticatedFetch = async (path: string, options: AuthenticatedFetchOptions = {}) => {
+    const url = `${apiURL}${path}`;
+
     const headers = new Headers(options.headers);
 
     if (options.token) {
@@ -20,5 +24,15 @@ export const authenticatedFetch = async (url: string, options: AuthenticatedFetc
         throw new Error(errorData.message || "Something went wrong");
     }
 
+    return response.json();
+};
+
+export const apiFetch = async (path: string, options: RequestInit = {}) => {
+    const url = `${apiURL}${path}`;
+    const response = await fetch(url, options);
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Something went wrong");
+    }
     return response.json();
 };

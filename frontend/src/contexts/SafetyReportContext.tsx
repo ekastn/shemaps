@@ -1,5 +1,6 @@
 import { createContext, type ReactNode, useCallback, useContext, useState } from "react";
 import type { SafetyReport } from "@/lib/types"; // Kita perlu tambahkan tipe data ini
+import { apiFetch } from "@/lib/api";
 
 interface SafetyReportContextType {
     reports: SafetyReport[];
@@ -24,17 +25,11 @@ export function SafetyReportProvider({ children }: { children: ReactNode }) {
             const east = bounds.getNorthEast().lng();
             const west = bounds.getSouthWest().lng();
 
-            const response = await fetch(
-                `http://localhost:3021/api/v1/reports?north=${north}&south=${south}&east=${east}&west=${west}`
+            const resp = await apiFetch(
+                `/reports?north=${north}&south=${south}&east=${east}&west=${west}`
             );
 
-            if (!response.ok) {
-                throw new Error("Failed to fetch safety reports");
-            }
-
-            const apiResponse = await response.json();
-
-            setReports(apiResponse.data || []);
+            setReports(resp.data || []);
         } catch (err) {
             console.error("Error fetching reports:", err);
             setError("Could not load safety reports.");

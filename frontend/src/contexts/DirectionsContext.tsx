@@ -43,7 +43,7 @@ export function DirectionsProvider({ children }: { children: ReactNode }) {
 
             try {
                 const result = await authenticatedFetch(
-                    `http://localhost:3021/api/v1/routes?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}`,
+                    `/routes?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}`,
                     { token: jwtToken, deviceId: deviceId }
                 );
 

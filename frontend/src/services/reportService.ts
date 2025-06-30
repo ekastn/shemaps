@@ -10,7 +10,7 @@ interface CreateReportPayload {
 }
 
 export const submitSafetyReport = async (token: string | null, deviceId: string | null, payload: CreateReportPayload): Promise<SafetyReport> => {
-    const result = await authenticatedFetch("http://localhost:3021/api/v1/reports", {
+    const result = await authenticatedFetch("/reports", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
