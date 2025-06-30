@@ -58,7 +58,7 @@ func (a *app) Init() {
 
 	handler := handlers.NewHandlers(mapsService, *reportService, queries, a.cfg)
 
-	mux := mount(handler)
+	mux := a.setupRoute(handler)
 
 	srv := &http.Server{
 		Addr:         a.cfg.Addr,
@@ -97,7 +97,7 @@ func (a *app) Start() {
 	log.Println("Server stopped gracefully")
 }
 
-func mount(h *handlers.Handlers) http.Handler {
+func (a *app) setupRoute(h *handlers.Handlers) http.Handler {
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
@@ -105,7 +105,7 @@ func mount(h *handlers.Handlers) http.Handler {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:5173"},
+		AllowedOrigins:   a.cfg.AllowedOrigins,
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "X-Device-ID"},
 		ExposedHeaders:   []string{"Link"},
