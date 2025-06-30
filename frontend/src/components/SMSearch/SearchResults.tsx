@@ -7,7 +7,7 @@ interface SearchResultsProps {
     filteredSuggestions: Location[];
     isLoading: boolean;
     error: string | null;
-    onSuggestionSelect: (suggestion: Location) => void;
+    onSuggestionSelect: (suggestion: Location) => Promise<void>;
 }
 
 export const SearchResults = ({

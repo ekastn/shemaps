@@ -19,7 +19,15 @@ const LocationContext = createContext<LocationContextType | undefined>(undefined
 export function LocationProvider({ children }: { children: ReactNode }) {
     const [currentCoordinate, setCurrentCoordinate] = useState<Coordinate | null>(null);
     const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
-    const [recentSearches, setRecentSearches] = useState<Location[]>([]);
+    const [recentSearches, setRecentSearches] = useState<Location[]>(() => {
+        try {
+            const storedSearches = localStorage.getItem("recentSearches");
+            return storedSearches ? JSON.parse(storedSearches) : [];
+        } catch (error) {
+            console.error("Failed to parse recent searches from localStorage:", error);
+            return [];
+        }
+    });
 
     const map = useMap();
     const navigate = useNavigate();
@@ -33,7 +41,6 @@ export function LocationProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         if (!navigator.geolocation) {
-            setLocationError("Geolocation is not supported by your browser");
             return;
         }
 
@@ -64,6 +71,10 @@ export function LocationProvider({ children }: { children: ReactNode }) {
             navigator.geolocation.clearWatch(watchId);
         };
     }, [map]);
+
+    useEffect(() => {
+        localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
+    }, [recentSearches]);
 
     const panToCurrentLocation = () => {
         if (map && currentCoordinate) {
