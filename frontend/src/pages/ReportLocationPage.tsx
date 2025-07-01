@@ -77,7 +77,7 @@ export const ReportLocationPage = () => {
     };
 
     return (
-        <div className="absolute inset-0 mx-auto max-w-md p-4">
+        <div className="absolute inset-0 mx-auto max-w-md p-4 bg-white">
             <Card className="p-6">
                 <CardHeader className="p-0 mb-4">
                     <CardTitle className="text-2xl font-bold">Report Safety Issue</CardTitle>

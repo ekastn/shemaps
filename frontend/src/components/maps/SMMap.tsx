@@ -134,7 +134,7 @@ export function SMMap({
                         position={{ lat: user.lat, lng: user.lng }}
                         title={`User ${user.device_id}`}
                     >
-                        <div className="p-1 bg-blue-500 rounded-full shadow">
+                        <div className="p-1 bg-primary rounded-full shadow">
                             <CircleUserRound className="w-5 h-5 text-white" />
                         </div>
                     </AdvancedMarker>
@@ -146,7 +146,7 @@ export function SMMap({
                     >
                         <div className="relative">
                             <div className="absolute -translate-x-1/2 -translate-y-full">
-                                <div className="bg-blue-600 text-white p-2 rounded-full shadow-lg">
+                                <div className="bg-primary text-white p-2 rounded-full shadow-lg">
                                     <MapPin className="w-5 h-5" fill="currentColor" />
                                 </div>
                                 <div className="absolute bottom-0 left-1/2 w-3 h-3 bg-blue-600 transform -translate-x-1/2 translate-y-1/2 rotate-45"></div>
@@ -161,7 +161,7 @@ export function SMMap({
                     >
                         <div className="relative">
                             <div className="absolute -translate-x-1/2 -translate-y-full">
-                                <div className="bg-blue-600 text-white p-2 rounded-full shadow-lg">
+                                <div className="bg-primary text-white p-2 rounded-full shadow-lg">
                                     <CircleDot className="w-5 h-5" fill="currentColor" />
                                 </div>
                             </div>

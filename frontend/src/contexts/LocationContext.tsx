@@ -40,6 +40,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         if (map?.panTo && selectedLocation?.coordinate) {
             map.panTo(selectedLocation.coordinate);
+            map.setZoom(18);
             navigate(`/place/${selectedLocation?.id}`);
         }
     }, [selectedLocation, map, navigate]);
@@ -111,6 +112,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
     const panToCurrentLocation = () => {
         if (map && currentCoordinate) {
             map.panTo(currentCoordinate);
+            map.setZoom(18);
         }
     };
 

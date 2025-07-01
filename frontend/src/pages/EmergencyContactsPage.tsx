@@ -1,16 +1,26 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { DialogFooter, DialogHeader } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Trash2, X } from "lucide-react";
-import { useNavigate } from "react-router";
-import { useState, useEffect } from "react";
-import {
-    getEmergencyContacts,
-    createEmergencyContact,
-    deleteEmergencyContact,
-} from "@/services/emergencyContactService";
 import { useAuth } from "@/contexts/AuthContext";
 import type { EmergencyContact } from "@/lib/types";
+import {
+    createEmergencyContact,
+    deleteEmergencyContact,
+    getEmergencyContacts,
+} from "@/services/emergencyContactService";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { ArrowLeft, Edit, Plus, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { Label } from "@/components/ui/label";
 
 const EmergencyContactsPage = () => {
     const navigate = useNavigate();
@@ -41,7 +51,8 @@ const EmergencyContactsPage = () => {
     };
 
     useEffect(() => {
-        if (deviceId) { // Only fetch if deviceId is available
+        if (deviceId) {
+            // Only fetch if deviceId is available
             fetchContacts();
         }
     }, [jwtToken, deviceId]);
@@ -60,7 +71,7 @@ const EmergencyContactsPage = () => {
             });
             setNewContactName("");
             setNewContactPhone("");
-            fetchContacts(); 
+            fetchContacts();
         } catch (err) {
             setError("Failed to add emergency contact.");
             console.error(err);
@@ -84,83 +95,105 @@ const EmergencyContactsPage = () => {
     };
 
     return (
-        <div className="fixed inset-0 z-20 bg-white flex items-center justify-center p-4">
-            <Card className="max-w-2xl mx-auto shadow-lg rounded-lg relative bg-white/90 backdrop-blur-sm">
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-2xl font-bold text-gray-800">
-                        Emergency Contacts
-                    </CardTitle>
+        <div className="absolute inset-0 bg-white">
+            <div className="px-6 py-4 shadow-lg">
+                <div className="flex items-center gap-4">
                     <Button
+                        onClick={handleClose}
                         variant="ghost"
                         size="icon"
-                        onClick={handleClose}
-                        className="text-gray-600 hover:text-gray-900"
+                        className="hover:bg-purple-700"
                     >
-                        <X className="h-5 w-5" />
+                        <ArrowLeft className="w-6 h-6" />
                     </Button>
-                </CardHeader>
-                <CardContent className="p-6">
-                    <div className="space-y-6">
-                        {isLoading && <p className="text-center text-blue-500">Loading contacts...</p>}
-                        {error && <p className="text-center text-red-500">{error}</p>}
+                    <h1 className="text-xl font-bold">Emergency Contacts</h1>
+                </div>
+            </div>
 
-                        {/* Contact List */}
-                        <div className="space-y-4 max-h-60 overflow-y-auto pr-2">
-                            {contacts.length === 0 && !isLoading && !error && (
-                                <p className="text-center text-gray-500">No emergency contacts found.</p>
-                            )}
-                            {contacts.map((contact) => (
-                                <div
-                                    key={contact.id}
-                                    className="flex items-center justify-between rounded-lg border border-gray-200 p-4 bg-white shadow-sm transition-all hover:shadow-md"
-                                >
-                                    <div>
-                                        <p className="font-semibold text-lg text-gray-800">{contact.contact_name}</p>
-                                        <p className="text-md text-gray-600">{contact.phone_number}</p>
+            {/* Contacts List */}
+            <div className="p-6">
+                <div className="space-y-6">
+                    {isLoading && <p className="text-center text-blue-500">Loading contacts...</p>}
+                    {error && <p className="text-center text-red-500">{error}</p>}
+                </div>
+                <Card>
+                    <CardContent className="p-0">
+                        {contacts.map((contact, index) => (
+                            <div key={contact.id}>
+                                <div className="flex items-center gap-4 p-4">
+                                    <div className="flex-1">
+                                        <h3 className="font-semibold text-lg">
+                                            {contact.contact_name}
+                                        </h3>
+                                        <p className="text-gray-500 text-xs">
+                                            {contact.created_at}
+                                        </p>
                                     </div>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => handleDeleteContact(contact.id)}
-                                        disabled={isLoading}
-                                        className="text-red-500 hover:bg-red-50 hover:text-red-600"
-                                    >
-                                        <Trash2 className="h-6 w-6" />
-                                    </Button>
-                                </div>
-                            ))}
-                        </div>
 
-                        {/* Add Contact Form */}
-                        <div className="space-y-4 pt-6 border-t border-gray-200">
-                            <h3 className="text-xl font-semibold text-center text-gray-800">
-                                Add New Contact
-                            </h3>
+                                    <div className="flex gap-2">
+                                        <Button variant="ghost" size="icon" className="w-8 h-8">
+                                            <Edit className="w-4 h-4 text-gray-600" />
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="w-8 h-8"
+                                            onClick={() => handleDeleteContact(contact.id)}
+                                            disabled={isLoading}
+                                        >
+                                            <Trash2 className="w-4 h-4 text-red-600" />
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                {index < contacts.length - 1 && (
+                                    <div className="border-b border-gray-100 mx-4" />
+                                )}
+                            </div>
+                        ))}
+                    </CardContent>
+                </Card>
+            </div>
+            <Dialog>
+                <DialogTrigger asChild>
+                    <div className="absolute bottom-8 right-6 ">
+                        <div className="flex items-center justify-center w-16 h-16 rounded-full shadow-lg">
+                            <Plus className="w-8 h-8" />
+                        </div>
+                    </div>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Add new contact</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4">
+                        <div className="grid gap-3">
+                            <Label>Contact name</Label>
                             <Input
-                                placeholder="Contact Name"
-                                className="text-md p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 value={newContactName}
                                 onChange={(e) => setNewContactName(e.target.value)}
                                 disabled={isLoading}
                             />
+                        </div>
+                        <div className="grid gap-3">
+                            <Label>Phone number</Label>
                             <Input
-                                placeholder="Phone Number"
-                                className="text-md p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 value={newContactPhone}
                                 onChange={(e) => setNewContactPhone(e.target.value)}
                                 disabled={isLoading}
                             />
-                            <Button
-                                className="w-full text-md py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md shadow-md transition-colors"
-                                onClick={handleAddContact}
-                                disabled={isLoading}
-                            >
-                                Add Contact
-                            </Button>
                         </div>
                     </div>
-                </CardContent>
-            </Card>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button variant="outline">Cancel</Button>
+                        </DialogClose>
+                        <Button onClick={handleAddContact} disabled={isLoading}>
+                            Add Contact
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };
