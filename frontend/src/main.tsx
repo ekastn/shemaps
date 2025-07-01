@@ -8,6 +8,7 @@ import { DirectionsProvider } from "./contexts/DirectionsContext.tsx";
 import { SafetyReportProvider } from "./contexts/SafetyReportContext.tsx";
 import { AuthProvider } from "./contexts/AuthContext.tsx";
 import { LoadingProvider, useLoading } from "./contexts/LoadingContext.tsx"; // Import LoadingProvider and useLoading
+import SplashScreen from "./components/SplashScreen.tsx";
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
@@ -20,7 +21,7 @@ function AppWrapper() {
                 <LocationProvider>
                     <DirectionsProvider>
                         <SafetyReportProvider>
-                            {isAppLoading ? <div>Loading Application...</div> : <App />}
+                            {isAppLoading ? <SplashScreen /> : <App />}
                         </SafetyReportProvider>
                     </DirectionsProvider>
                 </LocationProvider>

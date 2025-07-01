@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 
 interface LoadingContextType {
     isAuthLoaded: boolean;
@@ -12,12 +12,25 @@ interface LoadingContextType {
 
 const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
 
+const MIN_LOADING_TIME = 1000; // 1 second (1000ms)
+
 export function LoadingProvider({ children }: { children: ReactNode }) {
     const [isAuthLoaded, setIsAuthLoaded] = useState(false);
     const [isMapsLoaded, setIsMapsLoaded] = useState(false);
     const [isGeolocationLoaded, setIsGeolocationLoaded] = useState(false);
+    const [minTimeElapsed, setMinTimeElapsed] = useState(false); // New state for minimum time
 
-    const isAppLoading = !(isAuthLoaded && isMapsLoaded && isGeolocationLoaded);
+    // Set minimum loading time
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setMinTimeElapsed(true);
+        }, MIN_LOADING_TIME);
+
+        return () => clearTimeout(timer);
+    }, []);
+
+    // App is loading if any core component is not loaded OR minimum time has not elapsed
+    const isAppLoading = !(isAuthLoaded && isMapsLoaded && isGeolocationLoaded && minTimeElapsed);
 
     const setAuthLoaded = (loaded: boolean) => setIsAuthLoaded(loaded);
     const setMapsLoaded = (loaded: boolean) => setIsMapsLoaded(loaded);
