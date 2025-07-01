@@ -11,7 +11,19 @@ import { LoadingProvider, useLoading } from "./contexts/LoadingContext.tsx"; // 
 import SplashScreen from "./components/SplashScreen.tsx";
 import { RealtimeProvider } from "./contexts/RealtimeContext.tsx";
 
-const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+declare global {
+    interface Window {
+        env: {
+            VITE_API_BASE_URL: string;
+            VITE_GOOGLE_MAPS_API_KEY: string;
+            VITE_ALLOWED_ORIGINS: string;
+            VITE_WS_URL: string;
+            VITE_GOOGLE_MAPS_ID: string;
+        };
+    }
+}
+
+const apiKey = window.env?.VITE_GOOGLE_MAPS_API_KEY || import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 function AppWrapper() {
     const { isAppLoading, setMapsLoaded } = useLoading();
