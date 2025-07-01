@@ -11,9 +11,10 @@ type Handlers struct {
 	Report           *ReportHandler
 	Auth             *AuthHandler
 	EmergencyContact *EmergencyContactHandler
+	WebSocket        *WebSocketHandler
 }
 
-func NewHandlers(mapsService *services.MapsService, reportService services.ReportService, store *store.Queries, config *config.Config) *Handlers {
+func NewHandlers(mapsService *services.MapsService, reportService services.ReportService, store *store.Queries, config *config.Config, wsHandler *WebSocketHandler) *Handlers {
 	authService := services.NewAuthService(store, config)
 	routeService := services.NewRouteService(mapsService, store)
 	emergencyContactService := services.NewEmergencyContactService(store)
@@ -23,5 +24,6 @@ func NewHandlers(mapsService *services.MapsService, reportService services.Repor
 		Report:           NewReportHandler(&reportService),
 		Auth:             NewAuthHandler(authService),
 		EmergencyContact: NewEmergencyContactHandler(emergencyContactService),
+		WebSocket:        wsHandler,
 	}
 }

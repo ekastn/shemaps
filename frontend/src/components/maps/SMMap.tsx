@@ -2,11 +2,12 @@ import { Map, AdvancedMarker, useMapsLibrary, useMap } from "@vis.gl/react-googl
 import { cn, getRouteColor } from "@/lib/utils";
 import { useEffect, useRef } from "react";
 import type { Coordinate } from "@/lib/types";
-import { CircleDot, MapPin, Pin, ShieldAlert, ShieldQuestion } from "lucide-react";
+import { CircleDot, MapPin, Pin, ShieldAlert, ShieldQuestion, CircleUserRound } from "lucide-react";
 import { useLocation } from "@/contexts/LocationContext";
 import { SMPolyline } from "./SMPolyline";
 import { useDirections } from "@/contexts/DirectionsContext";
 import { useSafetyReports } from "@/contexts/SafetyReportContext";
+import { useRealtime } from "@/contexts/RealtimeContext";
 
 type SMMapProps = {
     center: Coordinate;
@@ -43,6 +44,7 @@ export function SMMap({
     const { currentCoordinate } = useLocation();
     const { routes, selectedRouteIndex } = useDirections();
     const { reports, fetchReportsInBounds } = useSafetyReports();
+    const { otherUsers } = useRealtime();
 
     const map = useMap();
     const geometryLibrary = useMapsLibrary("geometry");
@@ -112,8 +114,8 @@ export function SMMap({
                 {canRenderRoutes &&
                     routes.map((route, index) => {
                         const path = google.maps.geometry.encoding.decodePath(
-                            route.overview_polyline.points
-                        ) as google.maps.LatLngLiteral[];
+                            (route.overview_polyline as any).points
+                        ) as any as google.maps.LatLngLiteral[];
 
                         return (
                             <SMPolyline
@@ -126,6 +128,17 @@ export function SMMap({
                             />
                         );
                     })}
+                {otherUsers.map((user) => (
+                    <AdvancedMarker
+                        key={user.user_id}
+                        position={{ lat: user.lat, lng: user.lng }}
+                        title={`User ${user.user_id}`}
+                    >
+                        <div className="p-1 bg-blue-500 rounded-full shadow">
+                            <CircleUserRound className="w-5 h-5 text-white" />
+                        </div>
+                    </AdvancedMarker>
+                ))}
                 {markerCoordinate && (
                     <AdvancedMarker
                         position={markerCoordinate}

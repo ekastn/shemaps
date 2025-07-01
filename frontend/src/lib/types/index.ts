@@ -59,3 +59,9 @@ export interface EmergencyContact {
     phone_number: string;
     created_at: string;
 }
+
+export interface UserLocation {
+    user_id: string;
+    lat: number;
+    lng: number;
+}

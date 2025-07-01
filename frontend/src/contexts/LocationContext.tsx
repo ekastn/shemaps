@@ -5,6 +5,7 @@ import { useMap } from "@vis.gl/react-google-maps";
 import { useNavigate } from "react-router";
 import { Geolocation, type Position as CapPosition } from "@capacitor/geolocation"; 
 import { useLoading } from "./LoadingContext"; // Import useLoading
+import { useRealtime } from "./RealtimeContext";
 
 interface LocationContextType {
     currentCoordinate: Coordinate | null;
@@ -87,6 +88,18 @@ export function LocationProvider({ children }: { children: ReactNode }) {
 
         setupGeolocation();
     }, [setGeolocationLoaded]); // Add setGeolocationLoaded to dependency array
+
+    const { sendLocation } = useRealtime();
+
+    useEffect(() => {
+        if (currentCoordinate) {
+            const interval = setInterval(() => {
+                sendLocation(currentCoordinate.lat, currentCoordinate.lng);
+            }, 10000); // Send location every 10 seconds
+
+            return () => clearInterval(interval);
+        }
+    }, [currentCoordinate, sendLocation]);
 
     useEffect(() => {
         localStorage.setItem("recentSearches", JSON.stringify(recentSearches));

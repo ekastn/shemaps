@@ -1,11 +1,11 @@
-import { useNavigate } from "react-router";
-import { useLocation } from "@/contexts/LocationContext";
-import { useDirections } from "@/contexts/DirectionsContext";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, CircleDot, MapPin, MoreVertical, ArrowUpDown, X } from "lucide-react";
-import { useEffect } from "react";
+import { useDirections } from "@/contexts/DirectionsContext";
+import { useLocation } from "@/contexts/LocationContext";
 import { getRouteColor } from "@/lib/utils";
 import { useMap } from "@vis.gl/react-google-maps";
+import { CircleDot, MapPin, X } from "lucide-react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 export const DirectionsPage = () => {
     const navigate = useNavigate();
@@ -142,7 +142,7 @@ export const DirectionsPage = () => {
                                             <div
                                                 className="text-sm"
                                                 dangerouslySetInnerHTML={{
-                                                    __html: step.html_instructions,
+                                                    __html: (step as any).html_instructions,
                                                 }}
                                             />
                                             {step.distance && (

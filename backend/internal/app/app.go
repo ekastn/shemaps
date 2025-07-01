@@ -15,6 +15,7 @@ import (
 	"github.com/ekastn/shemaps/backend/internal/handlers"
 	"github.com/ekastn/shemaps/backend/internal/services"
 	"github.com/ekastn/shemaps/backend/internal/store"
+	"github.com/ekastn/shemaps/backend/internal/websocket"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/go-chi/chi/v5"
@@ -56,7 +57,13 @@ func (a *app) Init() {
 
 	reportService := services.NewReportService(queries)
 
-	handler := handlers.NewHandlers(mapsService, *reportService, queries, a.cfg)
+	hub := websocket.NewHub()
+	go hub.Run()
+	wsHandler := handlers.NewWebSocketHandler(hub)
+	log.Printf("App Init: wsHandler.Hub: %p", wsHandler.Hub) // Debug log
+
+	handler := handlers.NewHandlers(mapsService, *reportService, queries, a.cfg, wsHandler)
+	log.Printf("App Init: handler.WebSocket.Hub: %p", handler.WebSocket.Hub) // Debug log
 
 	mux := a.setupRoute(handler)
 
@@ -153,6 +160,7 @@ func (a *app) setupRoute(h *handlers.Handlers) http.Handler {
 			authMiddleware := custommiddleware.Authenticate(h.Auth.GetAuthService())
 			r.Use(authMiddleware)
 			r.Post("/reports", h.Report.CreateReport)
+			r.Get("/ws", h.WebSocket.ServeWs)
 		})
 	})
 
