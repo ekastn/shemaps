@@ -10,7 +10,7 @@ export function SMLocationButton() {
             variant="outline"
             size="icon"
             onClick={panToCurrentLocation}
-            className="bg-white shadow-md size-10 rounded-full"
+            className="bg-white shadow-md size-12 rounded-full"
         >
             <LocateFixed className="h-5 w-5" />
         </Button>

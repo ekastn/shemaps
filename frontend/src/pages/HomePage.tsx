@@ -30,7 +30,7 @@ export const HomePage = () => {
                         variant="outline"
                         size="icon"
                         onClick={handlePinClick}
-                        className="bg-white shadow-md rounded-full"
+                        className="size-12 bg-white shadow-md rounded-full"
                     >
                         <MapPin className="h-5 w-5" />
                     </Button>
@@ -38,7 +38,7 @@ export const HomePage = () => {
                         variant="outline"
                         size="icon"
                         onClick={handleEmergencyContactsClick}
-                        className="bg-white shadow-md rounded-full"
+                        className="size-12 bg-white shadow-md rounded-full"
                     >
                         <Users className="h-5 w-5" />
                     </Button>
