@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import type { ReactNode } from "react";
 import type { UserLocation } from "@/lib/types";
 import { useAuth } from "./AuthContext";
+import { useLoading } from "./LoadingContext";
 import { websocketService } from "../services/websocketService";
 
 interface RealtimeContextType {
@@ -14,11 +15,17 @@ const RealtimeContext = createContext<RealtimeContextType | undefined>(undefined
 export const RealtimeProvider = ({ children }: { children: ReactNode }) => {
     const [otherUsers, setOtherUsers] = useState<UserLocation[]>([]);
     const { isAuthenticated, deviceId, user } = useAuth();
+    const { setRealtimeLoaded } = useLoading();
 
     useEffect(() => {
         const handleMessage = (message: any) => {
             if (message.type === "all_users_locations") {
-                setOtherUsers(message.payload.users);
+                console.log("Received all users locations:", message.payload.users);
+                if (!message.payload.users)  return; 
+                const filteredUsers = message.payload.users.filter(
+                    (u: UserLocation) => u.device_id !== deviceId
+                );
+                setOtherUsers(filteredUsers);
             }
         };
 
@@ -29,12 +36,13 @@ export const RealtimeProvider = ({ children }: { children: ReactNode }) => {
                 },
                 deviceId
             );
-        }
+        } 
 
+        setRealtimeLoaded(true); 
         return () => {
             websocketService.disconnect();
         };
-    }, [isAuthenticated, deviceId]);
+    }, [isAuthenticated, deviceId, user]);
 
     const sendLocation = useCallback(
         (lat: number, lng: number) => {

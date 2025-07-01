@@ -13,7 +13,10 @@ import (
 
 type contextKey string
 
-const UserIDKey = contextKey("userID")
+const (
+	UserIDKey   = contextKey("userID")
+	DeviceIDKey = contextKey("deviceID")
+)
 
 func Authenticate(authService *services.AuthService) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
@@ -67,6 +70,7 @@ func Authenticate(authService *services.AuthService) func(http.Handler) http.Han
 				}
 
 				ctx := context.WithValue(r.Context(), UserIDKey, userID)
+				ctx = context.WithValue(ctx, DeviceIDKey, deviceID)
 				next.ServeHTTP(w, r.WithContext(ctx))
 				return
 			}
@@ -81,4 +85,9 @@ func Authenticate(authService *services.AuthService) func(http.Handler) http.Han
 func GetUserIDFromContext(ctx context.Context) (interface{}, bool) {
 	userID, ok := ctx.Value(UserIDKey).(interface{})
 	return userID, ok
+}
+
+func GetDeviceIDFromContext(ctx context.Context) (interface{}, bool) {
+	deviceID, ok := ctx.Value(DeviceIDKey).(interface{})
+	return deviceID, ok
 }

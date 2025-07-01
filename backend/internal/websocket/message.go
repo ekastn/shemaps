@@ -1,6 +1,13 @@
 // file: internal/websocket/message.go
 package websocket
 
+const (
+	// Message types
+	UpdateLocation      = "update_location"
+	AllUsersLocations   = "all_users_locations"
+	UserDisconnected    = "user_disconnected"
+)
+
 // Generic Message structure
 type Message struct {
 	Type    string      `json:"type"`
@@ -19,7 +26,7 @@ type AllUsersLocationsPayload struct {
 }
 
 type UserLocation struct {
-	UserID string  `json:"user_id"`
+	DeviceID string  `json:"device_id"`
 	Lat    float64 `json:"lat"`
 	Lng    float64 `json:"lng"`
 }

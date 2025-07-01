@@ -60,10 +60,8 @@ func (a *app) Init() {
 	hub := websocket.NewHub()
 	go hub.Run()
 	wsHandler := handlers.NewWebSocketHandler(hub)
-	log.Printf("App Init: wsHandler.Hub: %p", wsHandler.Hub) // Debug log
 
 	handler := handlers.NewHandlers(mapsService, *reportService, queries, a.cfg, wsHandler)
-	log.Printf("App Init: handler.WebSocket.Hub: %p", handler.WebSocket.Hub) // Debug log
 
 	mux := a.setupRoute(handler)
 

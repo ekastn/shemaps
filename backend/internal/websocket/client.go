@@ -1,9 +1,11 @@
-// file: internal/websocket/client.go
 package websocket
 
 import (
+	"bytes"
+	"encoding/json"
 	"log"
 	"time"
+
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
@@ -15,18 +17,27 @@ const (
 	maxMessageSize = 512
 )
 
+var (
+	newline = []byte{10}
+	space   = []byte{32}
+)
+
 // Client is a middleman between the websocket connection and the hub.
 type Client struct {
-	Hub    *Hub
-	Conn   *websocket.Conn
-	Send   chan []byte
-	UserID uuid.UUID
+	Hub *Hub
+
+	Conn *websocket.Conn
+
+	Send chan []byte
+
+	DeviceID uuid.UUID
+	Location *UserLocation
 }
 
 // ReadPump pumps messages from the websocket connection to the hub.
 func (c *Client) ReadPump() {
 	defer func() {
-		c.Hub.unregister <- c
+		c.Hub.Unregister <- c
 		c.Conn.Close()
 	}()
 	c.Conn.SetReadLimit(maxMessageSize)
@@ -40,10 +51,33 @@ func (c *Client) ReadPump() {
 			}
 			break
 		}
-		// Here, we will process the message from the client (e.g., location update)
-		// and pass it to the hub to be broadcasted.
-		// For the initial prototype, we can just broadcast it directly.
-		c.Hub.broadcast <- message
+		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+
+		var msg Message
+		if err := json.Unmarshal(message, &msg); err != nil {
+			log.Printf("error decoding message: %v", err)
+			continue
+		}
+
+		switch msg.Type {
+		case UpdateLocation:
+			payloadBytes, err := json.Marshal(msg.Payload)
+			if err != nil {
+				log.Printf("error marshalling payload: %v", err)
+				continue
+			}
+			var loc UpdateLocationPayload
+			if err := json.Unmarshal(payloadBytes, &loc); err != nil {
+				log.Printf("error unmarshalling location payload: %v", err)
+				continue
+			}
+			c.Location = &UserLocation{
+				DeviceID: c.DeviceID.String(),
+				Lat:    loc.Lat,
+				Lng:    loc.Lng,
+			}
+			c.Hub.Broadcast <- c
+		}
 	}
 }
 

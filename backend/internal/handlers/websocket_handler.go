@@ -30,17 +30,16 @@ func NewWebSocketHandler(hub *websocket.Hub) *WebSocketHandler {
 }
 
 func (h *WebSocketHandler) ServeWs(w http.ResponseWriter, r *http.Request) {
-	userID, ok := custommiddleware.GetUserIDFromContext(r.Context())
+	deviceID, ok := custommiddleware.GetDeviceIDFromContext(r.Context())
 	if !ok {
-		log.Println("Could not get userID from context before upgrade") // More specific log
-		// It's crucial to return here if authentication failed
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		log.Println("Could not get deviceID from context before upgrade")
+		utils.Error(w, http.StatusUnauthorized, "Unauthorized", "Missing or invalid device ID")
 		return
 	}
 
-	parsedUserID, ok := userID.(uuid.UUID)
+	parsedDeviceID, ok := deviceID.(uuid.UUID)
 	if !ok {
-		utils.Error(w, http.StatusInternalServerError, "Internal Server Error", "Failed to parse user ID")
+		utils.Error(w, http.StatusInternalServerError, "Internal Server Error", "Failed to parse device ID")
 		return
 	}
 
@@ -50,7 +49,7 @@ func (h *WebSocketHandler) ServeWs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := &websocket.Client{Hub: h.Hub, Conn: conn, Send: make(chan []byte, 256), UserID: parsedUserID}
+	client := &websocket.Client{Hub: h.Hub, Conn: conn, Send: make(chan []byte, 256), DeviceID: parsedDeviceID}
 
 	if client.Hub == nil {
 		log.Println("ServeWs: client.Hub is nil")

@@ -61,7 +61,7 @@ export interface EmergencyContact {
 }
 
 export interface UserLocation {
-    user_id: string;
+    device_id: string;
     lat: number;
     lng: number;
 }

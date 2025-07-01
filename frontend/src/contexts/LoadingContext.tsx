@@ -4,9 +4,11 @@ interface LoadingContextType {
     isAuthLoaded: boolean;
     isMapsLoaded: boolean;
     isGeolocationLoaded: boolean;
+    isRealtimeLoaded: boolean; // New: Realtime connection status
     setAuthLoaded: (loaded: boolean) => void;
     setMapsLoaded: (loaded: boolean) => void;
     setGeolocationLoaded: (loaded: boolean) => void;
+    setRealtimeLoaded: (loaded: boolean) => void; // New: Setter for realtime status
     isAppLoading: boolean;
 }
 
@@ -18,6 +20,7 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
     const [isAuthLoaded, setIsAuthLoaded] = useState(false);
     const [isMapsLoaded, setIsMapsLoaded] = useState(false);
     const [isGeolocationLoaded, setIsGeolocationLoaded] = useState(false);
+    const [isRealtimeLoaded, setIsRealtimeLoaded] = useState(false); // New state for realtime
     const [minTimeElapsed, setMinTimeElapsed] = useState(false); // New state for minimum time
 
     // Set minimum loading time
@@ -30,11 +33,18 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
     }, []);
 
     // App is loading if any core component is not loaded OR minimum time has not elapsed
-    const isAppLoading = !(isAuthLoaded && isMapsLoaded && isGeolocationLoaded && minTimeElapsed);
+    const isAppLoading = !(
+        isAuthLoaded &&
+        isMapsLoaded &&
+        isGeolocationLoaded &&
+        isRealtimeLoaded &&
+        minTimeElapsed
+    );
 
     const setAuthLoaded = (loaded: boolean) => setIsAuthLoaded(loaded);
     const setMapsLoaded = (loaded: boolean) => setIsMapsLoaded(loaded);
     const setGeolocationLoaded = (loaded: boolean) => setIsGeolocationLoaded(loaded);
+    const setRealtimeLoaded = (loaded: boolean) => setIsRealtimeLoaded(loaded); // New setter for realtime
 
     return (
         <LoadingContext.Provider
@@ -42,9 +52,11 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
                 isAuthLoaded,
                 isMapsLoaded,
                 isGeolocationLoaded,
+                isRealtimeLoaded,
                 setAuthLoaded,
                 setMapsLoaded,
                 setGeolocationLoaded,
+                setRealtimeLoaded,
                 isAppLoading,
             }}
         >
@@ -60,3 +72,4 @@ export function useLoading() {
     }
     return context;
 }
+

@@ -130,9 +130,9 @@ export function SMMap({
                     })}
                 {otherUsers.map((user) => (
                     <AdvancedMarker
-                        key={user.user_id}
+                        key={user.device_id}
                         position={{ lat: user.lat, lng: user.lng }}
-                        title={`User ${user.user_id}`}
+                        title={`User ${user.device_id}`}
                     >
                         <div className="p-1 bg-blue-500 rounded-full shadow">
                             <CircleUserRound className="w-5 h-5 text-white" />
