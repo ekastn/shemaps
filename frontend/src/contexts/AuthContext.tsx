@@ -1,12 +1,13 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { useLoading } from "./LoadingContext"; // Import useLoading
 
 interface AuthContextType {
     deviceId: string | null;
     jwtToken: string | null;
     setJwtToken: (token: string | null) => void;
     clearAuth: () => void;
-    isLoading: boolean;
+    // Removed isLoading from here as it will be managed globally
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -14,7 +15,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [deviceId, setDeviceId] = useState<string | null>(null);
     const [jwtToken, setJwtToken] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    // Removed local isLoading state
+
+    const { setAuthLoaded } = useLoading(); // Use setAuthLoaded from LoadingContext
 
     useEffect(() => {
         // Device ID Management
@@ -31,8 +34,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setJwtToken(storedJwtToken);
         }
 
-        setIsLoading(false); // Auth context is loaded
-    }, []);
+        setAuthLoaded(true); // Signal that Auth context is loaded
+    }, [setAuthLoaded]); // Add setAuthLoaded to dependency array
 
     const handleSetJwtToken = useCallback((token: string | null) => {
         if (token) {
@@ -55,10 +58,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 jwtToken,
                 setJwtToken: handleSetJwtToken,
                 clearAuth,
-                isLoading,
+                // Removed isLoading from value
             }}
         >
-            {isLoading ? <div>Loading authentication...</div> : children}
+            {children} {/* Removed conditional rendering */}
         </AuthContext.Provider>
     );
 }

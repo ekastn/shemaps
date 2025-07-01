@@ -4,6 +4,7 @@ import type { Location, Coordinate } from "@/lib/types";
 import { useMap } from "@vis.gl/react-google-maps";
 import { useNavigate } from "react-router";
 import { Geolocation, type Position as CapPosition } from "@capacitor/geolocation"; 
+import { useLoading } from "./LoadingContext"; // Import useLoading
 
 interface LocationContextType {
     currentCoordinate: Coordinate | null;
@@ -32,6 +33,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
 
     const map = useMap();
     const navigate = useNavigate();
+    const { setGeolocationLoaded } = useLoading(); // Use setGeolocationLoaded from LoadingContext
 
     useEffect(() => {
         if (map?.panTo && selectedLocation?.coordinate) {
@@ -72,16 +74,19 @@ export function LocationProvider({ children }: { children: ReactNode }) {
 
                 const callbackId = await Geolocation.watchPosition(options, watchCallback);
 
+                setGeolocationLoaded(true); // Signal that Geolocation is loaded
+
                 return () => {
                     Geolocation.clearWatch({ id: callbackId });
                 };
             } catch (error) {
                 console.error("Error setting up geolocation:", error);
+                setGeolocationLoaded(true); // Also signal loaded on error to prevent infinite loading
             }
         };
 
         setupGeolocation();
-    }, []); 
+    }, [setGeolocationLoaded]); // Add setGeolocationLoaded to dependency array
 
     useEffect(() => {
         localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
