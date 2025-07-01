@@ -4,6 +4,7 @@ import type { Location, Coordinate } from "@/lib/types";
 import { useMap } from "@vis.gl/react-google-maps";
 import { useNavigate } from "react-router";
 import { Geolocation, type Position as CapPosition } from "@capacitor/geolocation"; 
+import { Capacitor } from "@capacitor/core";
 import { useLoading } from "./LoadingContext"; // Import useLoading
 import { useRealtime } from "./RealtimeContext";
 
@@ -46,12 +47,14 @@ export function LocationProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         const setupGeolocation = async () => {
             try {
-                let permStatus = await Geolocation.checkPermissions();
-                if (permStatus.location !== 'granted') {
-                    permStatus = await Geolocation.requestPermissions();
+                if (Capacitor.isNativePlatform()) {
+                    let permStatus = await Geolocation.checkPermissions();
                     if (permStatus.location !== 'granted') {
-                        console.warn("Geolocation permission not granted.");
-                        return;
+                        permStatus = await Geolocation.requestPermissions();
+                        if (permStatus.location !== 'granted') {
+                            console.warn("Geolocation permission not granted.");
+                            return;
+                        }
                     }
                 }
 

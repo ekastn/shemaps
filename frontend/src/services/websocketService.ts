@@ -15,13 +15,11 @@ class WebSocketService {
     private reconnectDelay = 3000;
 
     private getWebSocketUrl = (deviceId: string | null) => {
-        const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-        const host = import.meta.env.VITE_API_HOST || "localhost:3021";
-        let url = `${protocol}//${host}/api/v1/ws`;
+        let wsUrl = import.meta.env.VITE_WS_URL
         if (deviceId) {
-            url += `?deviceId=${deviceId}`;
+            wsUrl += `?deviceId=${deviceId}`;
         }
-        return url;
+        return wsUrl;
     };
 
     public connect(callbacks?: WebSocketServiceCallbacks, deviceId?: string | null) {
