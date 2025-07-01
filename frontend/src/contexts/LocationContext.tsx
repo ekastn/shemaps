@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import type { Location, Coordinate } from "@/lib/types";
 import { useMap } from "@vis.gl/react-google-maps";
 import { useNavigate } from "react-router";
+import { Geolocation, type Position as CapPosition } from "@capacitor/geolocation"; 
 
 interface LocationContextType {
     currentCoordinate: Coordinate | null;
@@ -40,37 +41,47 @@ export function LocationProvider({ children }: { children: ReactNode }) {
     }, [selectedLocation, map, navigate]);
 
     useEffect(() => {
-        if (!navigator.geolocation) {
-            return;
-        }
+        const setupGeolocation = async () => {
+            try {
+                let permStatus = await Geolocation.checkPermissions();
+                if (permStatus.location !== 'granted') {
+                    permStatus = await Geolocation.requestPermissions();
+                    if (permStatus.location !== 'granted') {
+                        console.warn("Geolocation permission not granted.");
+                        return;
+                    }
+                }
 
-        const handleSuccess = (position: GeolocationPosition) => {
-            const { latitude, longitude } = position.coords;
-            const newCoord = { lat: latitude, lng: longitude };
-            setCurrentCoordinate(newCoord);
-            // if (map?.panTo) {
-            //   map.panTo(newCoord);
-            // }
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0,
+                };
+
+                const watchCallback = (position: CapPosition | null, error?: any) => {
+                    if (error) {
+                        console.error("Error getting location:", error);
+                        return;
+                    }
+                    if (position) {
+                        const { latitude, longitude } = position.coords;
+                        const newCoord = { lat: latitude, lng: longitude };
+                        setCurrentCoordinate(newCoord);
+                    }
+                };
+
+                const callbackId = await Geolocation.watchPosition(options, watchCallback);
+
+                return () => {
+                    Geolocation.clearWatch({ id: callbackId });
+                };
+            } catch (error) {
+                console.error("Error setting up geolocation:", error);
+            }
         };
 
-        const handleError = (error: GeolocationPositionError) => {
-            console.error("Error getting location:", error);
-        };
-
-        // Request high accuracy if needed (uses more battery)
-        const options = {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0,
-        };
-
-        const watchId = navigator.geolocation.watchPosition(handleSuccess, handleError, options);
-
-        // Cleanup the geolocation watcher when component unmounts
-        return () => {
-            navigator.geolocation.clearWatch(watchId);
-        };
-    }, [map]);
+        setupGeolocation();
+    }, []); 
 
     useEffect(() => {
         localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
