@@ -1,6 +1,22 @@
 version: '3.8'
 
 services:
+  frontend:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile.web
+    restart: always
+    ports:
+      - "3022:80"
+    environment:
+      VITE_GOOGLE_MAPS_API_KEY: ${VITE_GOOGLE_MAPS_API_KEY}
+      VITE_GOOGLE_MAPS_ID: ${VITE_GOOGLE_MAPS_ID}
+      VITE_API_URL: http://backend:3021/api/v1
+      VITE_WS_URL: ws://backend:3021/api/v1/ws
+
+    depends_on:
+      - backend
+
   backend:
     build:
       context: ./backend/
