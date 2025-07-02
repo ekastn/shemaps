@@ -99,7 +99,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
         if (currentCoordinate) {
             const interval = setInterval(() => {
                 sendLocation(currentCoordinate.lat, currentCoordinate.lng);
-            }, 10000); // Send location every 10 seconds
+            }, 3000); // Send location every 10 seconds
 
             return () => clearInterval(interval);
         }

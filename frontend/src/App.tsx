@@ -3,6 +3,7 @@ import { SMMap } from "@/components/maps/SMMap";
 import { useLocation } from "@/contexts/LocationContext";
 import { HomePage, SearchPage, PinOnMapPage, PlaceInfoPage, DirectionsPage, EmergencyContactsPage } from "@/pages";
 import { ReportLocationPage } from "./pages/ReportLocationPage";
+import { PanicButton } from "@/components/core/PanicButton";
 
 export default function App() {
     const { currentCoordinate, selectedLocation } = useLocation();
@@ -28,6 +29,8 @@ export default function App() {
                 <Route path="/directions" element={<DirectionsPage />} />
                 <Route path="/contacts" element={<EmergencyContactsPage />} />
             </Routes>
+
+            <PanicButton />
         </div>
     );
 }

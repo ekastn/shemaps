@@ -79,6 +79,7 @@ class WebSocketService {
 
     public send(message: any) {
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+            console.log("WebSocket message sent:", message);
             this.ws.send(JSON.stringify(message));
         } else {
             console.warn("WebSocket not open. Message not sent:", message);

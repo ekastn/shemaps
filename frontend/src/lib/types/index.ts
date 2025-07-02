@@ -64,4 +64,5 @@ export interface UserLocation {
     device_id: string;
     lat: number;
     lng: number;
+    is_in_panic: boolean;
 }

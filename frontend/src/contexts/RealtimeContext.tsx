@@ -8,6 +8,7 @@ import { websocketService } from "../services/websocketService";
 interface RealtimeContextType {
     otherUsers: UserLocation[];
     sendLocation: (lat: number, lng: number) => void;
+    triggerPanic: () => void;
 }
 
 const RealtimeContext = createContext<RealtimeContextType | undefined>(undefined);
@@ -21,7 +22,7 @@ export const RealtimeProvider = ({ children }: { children: ReactNode }) => {
         const handleMessage = (message: any) => {
             if (message.type === "all_users_locations") {
                 console.log("Received all users locations:", message.payload.users);
-                if (!message.payload.users)  return; 
+                if (!message.payload.users) return;
                 const filteredUsers = message.payload.users.filter(
                     (u: UserLocation) => u.device_id !== deviceId
                 );
@@ -36,9 +37,9 @@ export const RealtimeProvider = ({ children }: { children: ReactNode }) => {
                 },
                 deviceId
             );
-        } 
+        }
 
-        setRealtimeLoaded(true); 
+        setRealtimeLoaded(true);
         return () => {
             websocketService.disconnect();
         };
@@ -60,8 +61,17 @@ export const RealtimeProvider = ({ children }: { children: ReactNode }) => {
         [isAuthenticated, deviceId]
     );
 
+    const triggerPanic = useCallback(() => {
+        if (isAuthenticated || deviceId) {
+            const message = {
+                type: "trigger_panic",
+            };
+            websocketService.send(message);
+        }
+    }, [isAuthenticated, deviceId]);
+
     return (
-        <RealtimeContext.Provider value={{ otherUsers, sendLocation }}>
+        <RealtimeContext.Provider value={{ otherUsers, sendLocation, triggerPanic }}>
             {children}
         </RealtimeContext.Provider>
     );

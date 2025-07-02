@@ -114,8 +114,8 @@ export function SMMap({
                 {canRenderRoutes &&
                     routes.map((route, index) => {
                         const path = google.maps.geometry.encoding.decodePath(
-                            (route.overview_polyline as any).points
-                        ) as any as google.maps.LatLngLiteral[];
+                            route.overview_polyline.points
+                        ) as google.maps.LatLngLiteral[];
 
                         return (
                             <SMPolyline
@@ -134,8 +134,12 @@ export function SMMap({
                         position={{ lat: user.lat, lng: user.lng }}
                         title={`User ${user.device_id}`}
                     >
-                        <div className="p-1 bg-primary rounded-full shadow">
-                            <CircleUserRound className="w-5 h-5 text-white" />
+                        <div className={`p-1 rounded-full shadow ${user.is_in_panic ? 'bg-red-500 animate-pulse' : 'bg-primary'}`}>
+                            {user.is_in_panic ? (
+                                <ShieldAlert className="w-5 h-5 text-white" />
+                            ) : (
+                                <CircleUserRound className="w-5 h-5 text-white" />
+                            )}
                         </div>
                     </AdvancedMarker>
                 ))}

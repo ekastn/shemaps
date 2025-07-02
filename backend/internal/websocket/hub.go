@@ -4,20 +4,19 @@ package websocket
 import (
 	"encoding/json"
 	"log"
+	"sync"
+
+	"github.com/google/uuid"
 )
 
 // Hub maintains the set of active clients and broadcasts messages to the clients
 type Hub struct {
-	// Registered clients.
-	clients map[*Client]bool
+	clients    map[uuid.UUID]*Client
+	clientsMux sync.RWMutex
 
-	// Inbound messages from the clients.
 	Broadcast chan *Client
 
-	// Register requests from the clients.
-	Register chan *Client
-
-	// Unregister requests from clients.
+	Register   chan *Client
 	Unregister chan *Client
 }
 
@@ -26,7 +25,7 @@ func NewHub() *Hub {
 		Broadcast:  make(chan *Client),
 		Register:   make(chan *Client),
 		Unregister: make(chan *Client),
-		clients:    make(map[*Client]bool),
+		clients:    make(map[uuid.UUID]*Client),
 	}
 }
 
@@ -34,23 +33,32 @@ func (h *Hub) Run() {
 	for {
 		select {
 		case client := <-h.Register:
-			h.clients[client] = true
+			h.clientsMux.Lock()
+			h.clients[client.DeviceID] = client
+			h.clientsMux.Unlock()
 			log.Printf("Client connected: %s", client.Conn.RemoteAddr())
-			h.broadcastLocations()
+			h.BroadcastState()
 		case client := <-h.Unregister:
-			if _, ok := h.clients[client]; ok {
-				delete(h.clients, client)
+			h.clientsMux.Lock()
+			if _, ok := h.clients[client.DeviceID]; ok {
+				delete(h.clients, client.DeviceID)
 				close(client.Send)
 				log.Printf("Client disconnected: %s", client.Conn.RemoteAddr())
-				h.broadcastLocations()
 			}
+			h.clientsMux.Unlock()
+			h.BroadcastState()
 		case <-h.Broadcast:
-			h.broadcastLocations()
+			h.clientsMux.RLock()
+			h.BroadcastState()
+			h.clientsMux.RUnlock()
 		}
 	}
 }
 
-func (h *Hub) broadcastLocations() {
+func (h *Hub) BroadcastState() {
+	h.clientsMux.RLock()
+	defer h.clientsMux.RUnlock()
+
 	locations := h.GetAllUserLocations()
 	payload := AllUsersLocationsPayload{Users: locations}
 	message := Message{Type: AllUsersLocations, Payload: payload}
@@ -61,22 +69,24 @@ func (h *Hub) broadcastLocations() {
 		return
 	}
 
-	for client := range h.clients {
+	for _, client := range h.clients {
 		select {
 		case client.Send <- msgBytes:
 		default:
-			close(client.Send)
-			delete(h.clients, client)
+			log.Printf("Client send buffer full, skipping: %s", client.DeviceID)
 		}
 	}
 }
 
 func (h *Hub) GetAllUserLocations() []UserLocation {
 	var locations []UserLocation
-	for client := range h.clients {
-		if client.Location != nil {
-			locations = append(locations, *client.Location)
-		}
+	for _, client := range h.clients {
+		locations = append(locations, UserLocation{
+			DeviceID:  client.DeviceID.String(),
+			Lat:       client.LastLat,
+			Lng:       client.LastLng,
+			IsInPanic: client.IsInPanic,
+		})
 	}
 	return locations
 }

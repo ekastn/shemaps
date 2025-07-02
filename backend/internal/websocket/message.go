@@ -3,9 +3,10 @@ package websocket
 
 const (
 	// Message types
-	UpdateLocation      = "update_location"
-	AllUsersLocations   = "all_users_locations"
-	UserDisconnected    = "user_disconnected"
+	UpdateLocation          = "update_location"
+	AllUsersLocations       = "all_users_locations"
+	UserDisconnected        = "user_disconnected"
+	MessageTypeTriggerPanic = "trigger_panic"
 )
 
 // Generic Message structure
@@ -26,7 +27,8 @@ type AllUsersLocationsPayload struct {
 }
 
 type UserLocation struct {
-	DeviceID string  `json:"device_id"`
-	Lat    float64 `json:"lat"`
-	Lng    float64 `json:"lng"`
+	DeviceID  string  `json:"device_id"`
+	Lat       float64 `json:"lat"`
+	Lng       float64 `json:"lng"`
+	IsInPanic bool    `json:"is_in_panic"`
 }

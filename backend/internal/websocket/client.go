@@ -26,12 +26,26 @@ var (
 type Client struct {
 	Hub *Hub
 
+	// The websocket connection.
 	Conn *websocket.Conn
 
+	// Buffered channel of outbound messages.
 	Send chan []byte
 
-	DeviceID uuid.UUID
-	Location *UserLocation
+	// User specific
+	DeviceID  uuid.UUID
+	IsInPanic bool
+	LastLat   float64
+	LastLng   float64
+}
+
+func NewClient(hub *Hub, conn *websocket.Conn, deviceId uuid.UUID) *Client {
+	return &Client{
+		Hub:      hub,
+		Conn:     conn,
+		Send:     make(chan []byte, 256),
+		DeviceID: deviceId,
+	}
 }
 
 // ReadPump pumps messages from the websocket connection to the hub.
@@ -71,17 +85,17 @@ func (c *Client) ReadPump() {
 				log.Printf("error unmarshalling location payload: %v", err)
 				continue
 			}
-			c.Location = &UserLocation{
-				DeviceID: c.DeviceID.String(),
-				Lat:    loc.Lat,
-				Lng:    loc.Lng,
-			}
-			c.Hub.Broadcast <- c
+			c.LastLat = loc.Lat
+			c.LastLng = loc.Lng
+		case MessageTypeTriggerPanic:
+			c.IsInPanic = true
 		}
+
+		c.Hub.Broadcast <- c
 	}
 }
 
-// writePump pumps messages from the hub to the websocket connection.
+// WritePump pumps messages from the hub to the websocket connection.
 func (c *Client) WritePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {

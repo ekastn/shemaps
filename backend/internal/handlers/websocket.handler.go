@@ -49,21 +49,9 @@ func (h *WebSocketHandler) ServeWs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := &websocket.Client{Hub: h.Hub, Conn: conn, Send: make(chan []byte, 256), DeviceID: parsedDeviceID}
+	client := websocket.NewClient(h.Hub, conn, parsedDeviceID)
 
-	if client.Hub == nil {
-		log.Println("ServeWs: client.Hub is nil")
-		http.Error(w, "Internal Server Error: Hub not initialized", http.StatusInternalServerError)
-		return
-	}
-
-	if client.Hub.Register == nil {
-		log.Println("ServeWs: client.Hub.Register channel is nil")
-		http.Error(w, "Internal Server Error: Hub Register channel not initialized", http.StatusInternalServerError)
-		return
-	}
-
-	client.Hub.Register <- client
+	h.Hub.Register <- client
 
 	go client.WritePump()
 	go client.ReadPump()
