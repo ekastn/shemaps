@@ -1,18 +1,18 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { submitSafetyReport } from '@/services/reportService';
-import { useSafetyReports } from "@/contexts/SafetyReportContext";
-import { useLocation } from "@/contexts/LocationContext";
-import { useMap } from "@vis.gl/react-google-maps";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocation } from "@/contexts/LocationContext";
+import { useSafetyReports } from "@/contexts/SafetyReportContext";
+import { submitSafetyReport } from '@/services/reportService';
+import { useMap } from "@vis.gl/react-google-maps";
+import { X } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router";
 
 export const ReportLocationPage = () => {
     const navigate = useNavigate();
     const { fetchReportsInBounds } = useSafetyReports();
-    const { selectedLocation } = useLocation();
+    const { selectedLocation, setSelectedLocation } = useLocation();
     const { jwtToken, deviceId } = useAuth();
     const map = useMap();
     
@@ -76,15 +76,28 @@ export const ReportLocationPage = () => {
         }
     };
 
+    const handleClose = () => {
+        navigate(-1);
+    };
+
     return (
-        <div className="absolute inset-0 mx-auto max-w-md p-4 bg-white">
-            <Card className="p-6">
-                <CardHeader className="p-0 mb-4">
-                    <CardTitle className="text-2xl font-bold">Report Safety Issue</CardTitle>
-                    <CardDescription>
-                        Share your experience to help keep others safe
-                    </CardDescription>
-                </CardHeader>
+        <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-lg pointer-events-auto overflow-hidden">
+            <div className="p-6 max-h-[60vh] overflow-y-auto">
+                <div className="mb-4">
+                    <div className="flex items-start justify-between">
+                        <h1 className="text-2xl font-bold mb-1">Report Safety Issue</h1>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={handleClose}
+                            aria-label="Close"
+                            className="pointer-events-auto bg-white/80 backdrop-blur-sm hover:bg-white"
+                        >
+                            <X className="h-5 w-5" />
+                        </Button>
+                    </div>
+                    <p className="text-gray-600">Share your experience to help keep others safe</p>
+                </div>
                 
                 <div className="space-y-6">
                     <div>
@@ -184,7 +197,7 @@ export const ReportLocationPage = () => {
                         <Button 
                             type="button" 
                             variant="outline" 
-                            onClick={() => navigate("/")}
+                            onClick={() => navigate(-1)}
                             className="flex-1"
                         >
                             Cancel
@@ -199,7 +212,7 @@ export const ReportLocationPage = () => {
                         </Button>
                     </div>
                 </div>
-            </Card>
+            </div>
         </div>
     );
 };

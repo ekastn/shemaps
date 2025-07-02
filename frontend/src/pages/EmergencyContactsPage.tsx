@@ -40,7 +40,6 @@ const EmergencyContactsPage = () => {
         setError(null);
         try {
             const data = await getEmergencyContacts(jwtToken, deviceId);
-            console.log(data);
             setContacts(data);
         } catch (err) {
             setError("Failed to fetch emergency contacts.");

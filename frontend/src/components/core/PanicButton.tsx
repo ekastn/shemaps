@@ -34,14 +34,17 @@ export function PanicButton() {
             onMouseUpCapture={handlePressEnd}
             onTouchStartCapture={handlePressStart}
             onTouchEndCapture={handlePressEnd}
-            className={`${positionAndSize} rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ${
+            className={`shadow-lg flex items-center justify-center transition-all duration-300 ${
                 isPressing ? "bg-yellow-400" : isPanicMode ? "bg-green-500" : "bg-red-600"
             }`}
         >
             {isPanicMode ? (
                 <ShieldCheck className="size-6 text-white" />
             ) : (
-                <ShieldAlert className="size-6 text-white" />
+                <div className="flex items-center justify-center">
+                    <ShieldAlert className="size-6 text-white" />
+                    <h3 className="text-lg">Panic</h3>
+                </div>
             )}
 
             {isPressing && (

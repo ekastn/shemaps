@@ -24,7 +24,6 @@ export const RealtimeProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         const handleMessage = (message: any) => {
             if (message.type === "all_users_locations") {
-                console.log("Received all users locations:", message.payload.users);
                 if (!message.payload.users) return;
                 const filteredUsers = message.payload.users.filter(
                     (u: UserLocation) => u.device_id !== deviceId

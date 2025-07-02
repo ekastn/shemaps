@@ -3,6 +3,7 @@ import { SMLocationButton } from "@/components/maps/SMLocationButton";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, MapPin, Search, Users } from "lucide-react";
 import { SMSearchBar } from "@/components/SMSearch/SMSearchBar";
+import { PanicButton } from "@/components/core/PanicButton";
 
 export const HomePage = () => {
     const navigate = useNavigate();
@@ -20,39 +21,20 @@ export const HomePage = () => {
     };
 
     return (
-        <>
-            <div className="absolute bottom-6 right-4 z-10">
-                <div className="flex flex-col items-end gap-y-2">
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={handleSearchClick}
-                        className="size-12 rounded-full shadow-md bg-red-600  text-white hover:bg-red-700 focus-visible:ring-red-500"
-                    >
-                        <AlertTriangle className="w-6 h-6" />
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={handleSearchClick}
-                        className="size-12 rounded-full shadow-md bg-red-600  text-white hover:bg-red-700 focus-visible:ring-red-500"
-                    >
-                        <AlertTriangle className="w-6 h-6" />
-                    </Button>
-                </div>
+        <div className="absolute bottom-0 left-0 right-0 ">
+            <PanicButton />
+            <div className="flex flex-col items-end p-4 gap-y-2">
+                <SMLocationButton />
             </div>
-            <div className="absolute bottom-6 left-4 right-4 z-10">
-                <div className="flex items-end gap-2">
-                    <SMSearchBar
-                        onFocus={() => navigate("/search")}
-                        readOnly={true}
-                        placeholder="Where do you want to go?"
-                        value=""
-                    />
-                    <SMLocationButton />
-                </div>
+            <div className="p-6 max-h-[60vh] bg-primary overflow-y-auto  rounded-t-2xl shadow-lg pointer-events-auto">
+                <SMSearchBar
+                    onFocus={() => navigate("/search")}
+                    readOnly={true}
+                    placeholder="Where do you want to go?"
+                    value=""
+                />
             </div>
-        </>
+        </div>
     );
 };
 
