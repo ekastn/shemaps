@@ -52,11 +52,8 @@ const config = {
                     DEFAULT: "hsl(var(--card))",
                     foreground: "hsl(var(--card-foreground))",
                 },
-                // "shemaps-purple": "hsl(var(--shemaps-purple))",
-                // "shemaps-pink": "hsl(var(--shemaps-pink))",
-                // "shemaps-teal": "hsl(var(--shemaps-teal))",
-                // "shemaps-red": "hsl(var(--shemaps-red))",
-                // "shemaps-panic-pink": "hsl(var(--shemaps-panic-pink))",
+                "shemaps-green": "#D4E9E2",
+                "shemaps-red": "#E57373",
             },
             borderRadius: {
                 lg: "var(--radius)",
