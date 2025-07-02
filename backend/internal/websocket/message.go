@@ -7,6 +7,7 @@ const (
 	AllUsersLocations       = "all_users_locations"
 	UserDisconnected        = "user_disconnected"
 	MessageTypeTriggerPanic = "trigger_panic"
+	MessageTypeResolvePanic = "resolve_panic"
 )
 
 // Generic Message structure

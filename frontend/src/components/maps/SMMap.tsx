@@ -114,8 +114,8 @@ export function SMMap({
                 {canRenderRoutes &&
                     routes.map((route, index) => {
                         const path = google.maps.geometry.encoding.decodePath(
-                            route.overview_polyline.points
-                        ) as google.maps.LatLngLiteral[];
+                            (route.overview_polyline as any).points
+                        ) as any as google.maps.LatLngLiteral[];
 
                         return (
                             <SMPolyline

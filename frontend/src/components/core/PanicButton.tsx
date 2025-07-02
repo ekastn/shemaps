@@ -1,18 +1,21 @@
-import { useState } from 'react';
-import { useLongPress } from '@/hooks/useLongPress';
-import { useRealtime } from '@/contexts/RealtimeContext';
-import { Button } from '@/components/ui/button';
-import { ShieldAlert } from 'lucide-react';
+import { useState } from "react";
+import { useLongPress } from "@/hooks/useLongPress";
+import { useRealtime } from "@/contexts/RealtimeContext";
+import { Button } from "@/components/ui/button";
+import { ShieldAlert, ShieldCheck } from "lucide-react";
 
 export function PanicButton() {
-    const { triggerPanic } = useRealtime();
+    const { triggerPanic, isPanicMode, resolvePanic } = useRealtime();
     const [isPressing, setIsPressing] = useState(false);
 
     const longPressProps = useLongPress(() => {
-        console.log('triggerPanic');
-        triggerPanic();
+        if (isPanicMode) {
+            resolvePanic();
+        } else {
+            triggerPanic();
+        }
         setIsPressing(false);
-    }, 2000);
+    }, 1000);
 
     const handlePressStart = () => {
         setIsPressing(true);
@@ -22,6 +25,8 @@ export function PanicButton() {
         setIsPressing(false);
     };
 
+    const positionAndSize = "absolute bottom-24 left-10 w-20 h-20";
+
     return (
         <Button
             {...longPressProps}
@@ -29,14 +34,20 @@ export function PanicButton() {
             onMouseUpCapture={handlePressEnd}
             onTouchStartCapture={handlePressStart}
             onTouchEndCapture={handlePressEnd}
-            className={`absolute bottom-24 left-10 w-20 h-20 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ${
-                isPressing ? 'bg-yellow-400' : 'bg-red-600'
-            }`}>
-            <ShieldAlert className="w-10 h-10 text-white" />
+            className={`${positionAndSize} rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ${
+                isPressing ? "bg-yellow-400" : isPanicMode ? "bg-green-500" : "bg-red-600"
+            }`}
+        >
+            {isPanicMode ? (
+                <ShieldCheck className="size-6 text-white" />
+            ) : (
+                <ShieldAlert className="size-6 text-white" />
+            )}
+
             {isPressing && (
                 <div
                     className="absolute inset-0 rounded-full bg-white opacity-50 animate-ping"
-                    style={{ animationDuration: '3s' }}
+                    style={{ animationDuration: "3s" }}
                 ></div>
             )}
         </Button>

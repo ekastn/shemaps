@@ -9,12 +9,15 @@ interface RealtimeContextType {
     otherUsers: UserLocation[];
     sendLocation: (lat: number, lng: number) => void;
     triggerPanic: () => void;
+    isPanicMode: boolean;
+    resolvePanic: () => void;
 }
 
 const RealtimeContext = createContext<RealtimeContextType | undefined>(undefined);
 
 export const RealtimeProvider = ({ children }: { children: ReactNode }) => {
     const [otherUsers, setOtherUsers] = useState<UserLocation[]>([]);
+    const [isPanicMode, setIsPanicMode] = useState(false);
     const { isAuthenticated, deviceId, user } = useAuth();
     const { setRealtimeLoaded } = useLoading();
 
@@ -67,11 +70,22 @@ export const RealtimeProvider = ({ children }: { children: ReactNode }) => {
                 type: "trigger_panic",
             };
             websocketService.send(message);
+            setIsPanicMode(true);
+        }
+    }, [isAuthenticated, deviceId]);
+
+    const resolvePanic = useCallback(() => {
+        if (isAuthenticated || deviceId) {
+            const message = {
+                type: "resolve_panic",
+            };
+            websocketService.send(message);
+            setIsPanicMode(false);
         }
     }, [isAuthenticated, deviceId]);
 
     return (
-        <RealtimeContext.Provider value={{ otherUsers, sendLocation, triggerPanic }}>
+        <RealtimeContext.Provider value={{ otherUsers, sendLocation, triggerPanic, isPanicMode, resolvePanic }}>
             {children}
         </RealtimeContext.Provider>
     );
