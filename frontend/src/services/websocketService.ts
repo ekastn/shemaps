@@ -15,7 +15,7 @@ class WebSocketService {
     private reconnectDelay = 3000;
 
     private getWebSocketUrl = (deviceId: string | null) => {
-        let wsUrl = window.env?.VITE_WS_URL || import.meta.env.VITE_WS_URL;
+        let wsUrl = import.meta.env.VITE_WS_URL;
         if (deviceId) {
             wsUrl += `?deviceId=${deviceId}`;
         }

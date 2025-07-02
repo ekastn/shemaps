@@ -15,7 +15,7 @@ export default function App() {
                 center={currentCoordinate || defaultCenter}
                 markerCoordinate={selectedLocation?.coordinate}
                 className="absolute inset-0"
-                mapId={window.env?.VITE_GOOGLE_MAPS_ID || import.meta.env.VITE_GOOGLE_MAPS_ID}
+                mapId={import.meta.env.VITE_GOOGLE_MAPS_ID}
             />
 
             {/* Route-based Pages */}
