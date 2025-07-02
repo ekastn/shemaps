@@ -25,7 +25,6 @@ export const DirectionsPage = () => {
     // Calculate route when component mounts or travel mode changes
     useEffect(() => {
         if (currentCoordinate && selectedLocation?.coordinate) {
-            console.log("Calculating route from direction page");
             calculateRoute(
                 { lat: currentCoordinate.lat, lng: currentCoordinate.lng },
                 selectedLocation.coordinate
@@ -108,29 +107,6 @@ export const DirectionsPage = () => {
                             <p className="text-gray-600">{routes[selectedRouteIndex].summary}</p>
                         </div>
                     </div>
-                    {routes.length > 1 && (
-                        <div className="flex overflow-x-auto space-x-2 px-4 mb-6">
-                            {routes.map((route, index) => (
-                                <Button
-                                    key={index}
-                                    onClick={() => handleRouteSelect(index)}
-                                    className={`px-3 py-2 rounded-xl text-sm whitespace-nowrap bg-white shadow-md transition-all ${
-                                        selectedRouteIndex === index
-                                            ? "border-2 border-blue-500 text-blue-800"
-                                            : "border border-gray-200 text-gray-700"
-                                    }`}
-                                    style={{
-                                        border: `${
-                                            selectedRouteIndex === index ? "2px" : "1px"
-                                        } solid ${getRouteColor(route.safety_level)}`,
-                                    }}
-                                >
-                                    Route {index + 1} • {route.legs[0]?.distance?.text} •{" "}
-                                    {route.legs[0]?.duration?.text}
-                                </Button>
-                            ))}
-                        </div>
-                    )}
                 </div>
             )}
 

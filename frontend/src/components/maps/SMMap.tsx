@@ -42,7 +42,7 @@ export function SMMap({
 }: SMMapProps) {
     const mapRef = useRef<google.maps.Map | null>(null);
     const { currentCoordinate } = useLocation();
-    const { routes, selectedRouteIndex } = useDirections();
+    const { routes, selectedRouteIndex, setSelectedRouteIndex } = useDirections();
     const { reports, fetchReportsInBounds } = useSafetyReports();
     const { otherUsers } = useRealtime();
 
@@ -125,6 +125,7 @@ export function SMMap({
                                 strokeOpacity={index === selectedRouteIndex ? 1.0 : 0.5}
                                 strokeWeight={index === selectedRouteIndex ? 8 : 6}
                                 zIndex={index === selectedRouteIndex ? 2 : 1}
+                                onClick={() => setSelectedRouteIndex(index)}
                             />
                         );
                     })}
