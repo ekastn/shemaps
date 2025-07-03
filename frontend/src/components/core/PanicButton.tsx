@@ -25,8 +25,6 @@ export function PanicButton() {
         setIsPressing(false);
     };
 
-    const positionAndSize = "absolute bottom-24 left-10 w-20 h-20";
-
     return (
         <Button
             {...longPressProps}
@@ -34,7 +32,7 @@ export function PanicButton() {
             onMouseUpCapture={handlePressEnd}
             onTouchStartCapture={handlePressStart}
             onTouchEndCapture={handlePressEnd}
-            className={`shadow-lg flex items-center justify-center transition-all duration-300 ${
+            className={`shadow-lg flex items-center justify-center transition-all duration-300 cursor-pointer ${
                 isPressing ? "bg-yellow-400" : isPanicMode ? "bg-green-500" : "bg-red-600"
             }`}
         >

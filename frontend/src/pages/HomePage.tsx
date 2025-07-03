@@ -22,7 +22,7 @@ export const HomePage = () => {
 
     return (
         <div className="absolute bottom-0 left-0 right-0 ">
-            <div className="flex items-center justify-between p-4 gap-y-2">
+            <div className="flex items-center justify-between p-4 gap-y-2 pointer-events-auto">
                 <SMLocationButton />
                 <PanicButton />
             </div>
