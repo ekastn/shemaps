@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useDirections } from "@/contexts/DirectionsContext";
 import { useLocation } from "@/contexts/LocationContext";
-import { getRouteColor } from "@/lib/utils";
 import { useMap } from "@vis.gl/react-google-maps";
 import { CircleDot, MapPin, X } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -12,15 +11,8 @@ export const DirectionsPage = () => {
     const navigate = useNavigate();
     const { currentCoordinate, selectedLocation } = useLocation();
 
-    const {
-        routes,
-        calculateRoute,
-        isLoading,
-        error,
-        selectedRouteIndex,
-        setSelectedRouteIndex,
-        clearDirections,
-    } = useDirections();
+    const { routes, calculateRoute, isLoading, error, selectedRouteIndex, clearDirections } =
+        useDirections();
 
     // Calculate route when component mounts or travel mode changes
     useEffect(() => {
@@ -57,15 +49,9 @@ export const DirectionsPage = () => {
         navigate(-1);
     };
 
-    const handleRouteSelect = (index: number) => {
-        setSelectedRouteIndex(index);
-    };
-
     return (
         <>
-            {/* Header */}
             <div className="relative z-10 p-4 rounded-b-2xl">
-                {/* Top component */}
                 <div className="bg-white rounded-xl shadow-lg p-4">
                     <div className="flex items-center justify-between">
                         <div className="flex-grow ml-4">
@@ -83,6 +69,12 @@ export const DirectionsPage = () => {
                         </div>
                     </div>
                 </div>
+                {isLoading && <div className="mt-4 bg-white p-4 rounded-md">Finding routes...</div>}
+                {error && (
+                    <div className="mt-4 bg-red-100 text-red-800 p-4 rounded-md">
+                        Cannot find routes
+                    </div>
+                )}
             </div>
 
             {routes.length > 0 && (
@@ -109,14 +101,6 @@ export const DirectionsPage = () => {
                     </div>
                 </div>
             )}
-
-            {isLoading && (
-                <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                    <div className="bg-white p-4 rounded-lg">Finding routes...</div>
-                </div>
-            )}
-
-            {error && <div className="bg-red-100 text-red-800 p-4">Error: {error}</div>}
         </>
     );
 };

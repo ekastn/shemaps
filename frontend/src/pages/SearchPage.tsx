@@ -25,8 +25,8 @@ export const SearchPage = () => {
 
     return (
         <div className="absolute inset-0 z-10 pointer-events-auto">
-            <div className="h-full w-full bg-white flex flex-col">
-                <div className="bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
+            <div className="h-full w-full flex flex-col p-2">
+                <div className="bg-white p-4 sticky top-0 z-10">
                     <SMSearchBar
                         value={searchQuery}
                         onChange={setSearchQuery}
@@ -36,10 +36,10 @@ export const SearchPage = () => {
                     />
                 </div>
 
-                <div className="bg-white p-3 border-b border-gray-200">
+                <div className="bg-white p-4 border-b border-gray-200">
                     <Button
                         variant="outline"
-                        className="w-full flex items-center justify-center gap-2 h-12 rounded-full border-gray-300"
+                        className="w-full flex items-center justify-center gap-2 h-12 rounded-md border-gray-300"
                         onClick={() => navigate("/pin")}
                     >
                         <MapPin className="w-5 h-5 text-gray-500" />
@@ -47,7 +47,7 @@ export const SearchPage = () => {
                     </Button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto">
+                <div className="flex-1 mt-4 overflow-y-auto">
                     <SearchResults
                         searchQuery={searchQuery}
                         recentSearches={recentSearches}

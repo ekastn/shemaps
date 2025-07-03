@@ -1,5 +1,8 @@
+import { MapPin, Navigation, Search } from "lucide-react";
+import { Card, CardContent } from "../ui/card";
 import { SMSearchSuggestions } from "./SMSearchSuggestions";
 import type { Location } from "@/lib/types";
+import { Button } from "../ui/button";
 
 interface SearchResultsProps {
     searchQuery: string;
@@ -33,7 +36,7 @@ export const SearchResults = ({
         return (
             <div className="text-center py-8 text-red-500">
                 <p>{error}</p>
-                <button 
+                <button
                     className="mt-2 text-sm text-blue-500 hover:underline"
                     onClick={() => window.location.reload()}
                 >
@@ -44,24 +47,23 @@ export const SearchResults = ({
     }
 
     return (
-        <>
-            {searchQuery === "" ? (
-                <div>
-                    <div className="px-4 py-2 text-sm font-medium text-gray-500">Recent Searches</div>
-                    <SMSearchSuggestions
-                        suggestions={recentSearches}
-                        onSuggestionSelect={onSuggestionSelect}
-                    />
-                </div>
-            ) : (
-                <div>
-                    <div className="px-4 py-2 text-sm font-medium text-gray-500">Search Results</div>
+        <Card className="shadow-lg rounded-md py-2 overflow-y-auto">
+            <CardContent className="p-0">
+                {searchQuery === "" ? (
+                    <div>
+                        <div className="px-4 py-2 text-sm font-medium text-gray-500">Recent</div>
+                        <SMSearchSuggestions
+                            suggestions={recentSearches}
+                            onSuggestionSelect={onSuggestionSelect}
+                        />
+                    </div>
+                ) : (
                     <SMSearchSuggestions
                         suggestions={filteredSuggestions}
                         onSuggestionSelect={onSuggestionSelect}
                     />
-                </div>
-            )}
-        </>
+                )}
+            </CardContent>
+        </Card>
     );
 };

@@ -34,7 +34,7 @@ export const PlaceInfoPage = ({ isNewPlace = false }: PlaceInfoPageProps) => {
     };
 
     return (
-        <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-lg pointer-events-auto overflow-hidden">
+        <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-lg pointer-events-auto overflow-hidden">
             <div className="p-6 max-h-[60vh] overflow-y-auto">
                 <div className="mb-4">
                     <div className="flex items-start justify-between">
@@ -71,14 +71,6 @@ export const PlaceInfoPage = ({ isNewPlace = false }: PlaceInfoPageProps) => {
                     >
                         <Shield className="h-4 w-4" />
                         <span className="text-current">Report</span>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 gap-2 rounded-xl text-blue-600 hover:text-blue-700"
-                    >
-                        <Bookmark className="h-4 w-4 fill-current" />
-                        <span className="text-current">Save</span>
                     </Button>
                 </div>
             </div>

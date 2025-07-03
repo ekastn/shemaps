@@ -3,16 +3,19 @@ import { useLongPress } from "@/hooks/useLongPress";
 import { useRealtime } from "@/contexts/RealtimeContext";
 import { Button } from "@/components/ui/button";
 import { ShieldAlert, ShieldCheck } from "lucide-react";
+import { useNavigate } from "react-router";
 
 export function PanicButton() {
     const { triggerPanic, isPanicMode, resolvePanic } = useRealtime();
     const [isPressing, setIsPressing] = useState(false);
+    const navigate = useNavigate();
 
     const longPressProps = useLongPress(() => {
         if (isPanicMode) {
             resolvePanic();
         } else {
             triggerPanic();
+            navigate("/panic");
         }
         setIsPressing(false);
     }, 1000);

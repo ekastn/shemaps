@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { MapPin, Search } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Location } from "@/lib/types";
 
@@ -7,8 +7,8 @@ interface SMSearchSuggestionsProps {
     onSuggestionSelect: (suggestion: Location) => void;
 }
 
-export const SMSearchSuggestions = ({ 
-    suggestions, 
+export const SMSearchSuggestions = ({
+    suggestions,
     onSuggestionSelect,
 }: SMSearchSuggestionsProps) => {
     if (suggestions.length === 0) {
@@ -21,25 +21,23 @@ export const SMSearchSuggestions = ({
     }
 
     return (
-        <div className="p-4 space-y-2">
+        <>
             {suggestions.map((suggestion) => (
-                <Card
-                    key={suggestion.id}
-                    className="cursor-pointer hover:shadow-md transition-shadow border-0 bg-gray-50 hover:bg-gray-100"
-                    onClick={() => onSuggestionSelect(suggestion)}
-                >
-                    <CardContent className="p-4">
-                        <div className="flex-1 min-w-0">
-                            <div className="font-semibold text-gray-900 truncate">
-                                {suggestion.name}
-                            </div>
-                            <div className="text-sm text-gray-600 truncate">
-                                {suggestion.address}
-                            </div>
+                <div key={suggestion.id} className="border-b last:border-b-0">
+                    <button
+                        className="w-full text-left p-4 hover:bg-gray-50 flex items-center gap-3"
+                        onClick={() => onSuggestionSelect(suggestion)}
+                    >
+                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                            <MapPin className="w-4 h-4 text-gray-600" />
                         </div>
-                    </CardContent>
-                </Card>
+                        <div className="flex-1">
+                            <p className="font-medium text-sm">{suggestion.name}</p>
+                            <p className="text-xs text-gray-600">{suggestion.address}</p>
+                        </div>
+                    </button>
+                </div>
             ))}
-        </div>
+        </>
     );
 };

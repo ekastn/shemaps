@@ -6,6 +6,7 @@ import {
     PlaceInfoPage,
     DirectionsPage,
     EmergencyContactsPage,
+    PanicModePage,
 } from "@/pages";
 import { ReportLocationPage } from "./pages/ReportLocationPage";
 import { MainLayout } from "./components/core/MainLayout";
@@ -22,6 +23,7 @@ export default function App() {
                 <Route path="/directions" element={<DirectionsPage />} />
                 <Route path="/contacts" element={<EmergencyContactsPage />} />
             </Route>
+            <Route path="/panic" element={<PanicModePage />} />
         </Routes>
     );
 }

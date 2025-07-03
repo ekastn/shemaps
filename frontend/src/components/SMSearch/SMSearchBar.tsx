@@ -53,14 +53,12 @@ export const SMSearchBar = ({
         setInputValue(e.target.value);
     }, []);
 
-
     return (
         <div className="relative" onClick={!isSearchMode ? onClick : undefined}>
             <div
-                className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${isSearchMode
-                        ? "cursor-pointer p-1 hover:bg-gray-100 rounded-full transition-colors"
-                        : ""
-                    }`}
+                className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${
+                    isSearchMode ? "cursor-pointer p-1 hover:bg-gray-100  transition-colors" : ""
+                }`}
                 onClick={handleIconClick}
             >
                 {isSearchMode ? (
@@ -72,10 +70,11 @@ export const SMSearchBar = ({
             <Input
                 onClick={!isSearchMode ? onClick : undefined}
                 placeholder={placeholder}
-                className={`pl-12 ${isSearchMode
-                        ? "border-gray-300 rounded-full h-11"
-                        : "bg-white shadow-lg border-0 rounded-full h-12 cursor-pointer"
-                    }`}
+                className={`pl-12 rounded-md ${
+                    isSearchMode
+                        ? "border-gray-300 h-11"
+                        : "bg-white shadow-lg border-0 h-12 cursor-pointer"
+                }`}
                 value={inputValue}
                 onChange={handleChange}
                 onFocus={onFocus}
