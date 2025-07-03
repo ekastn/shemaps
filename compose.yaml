@@ -1,4 +1,4 @@
-version: '3.8'
+
 
 services:
   frontend:
@@ -9,11 +9,11 @@ services:
     ports:
       - "3022:5173"
     environment:
-      VITE_API_URL: http://backend:3024/api/v1
       VITE_GOOGLE_MAPS_API_KEY: ${VITE_GOOGLE_MAPS_API_KEY}
-      VITE_ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
-      VITE_WS_URL: ws://backend:3024/api/v1/ws
       VITE_GOOGLE_MAPS_ID: ${VITE_GOOGLE_MAPS_ID}
+      VITE_ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+      VITE_API_URL: http://localhost:3024/api/v1
+      VITE_WS_URL: ws://localhost:3024/api/v1/ws
     depends_on:
       - backend
 

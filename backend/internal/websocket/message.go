@@ -8,6 +8,7 @@ const (
 	UserDisconnected        = "user_disconnected"
 	MessageTypeTriggerPanic = "trigger_panic"
 	MessageTypeResolvePanic = "resolve_panic"
+	MessageTypePanicAlert   = "panic_alert"
 )
 
 // Generic Message structure
@@ -20,6 +21,14 @@ type Message struct {
 type UpdateLocationPayload struct {
 	Lat float64 `json:"lat"`
 	Lng float64 `json:"lng"`
+}
+
+// PanicAlertPayload is the payload for the panic_alert message
+type PanicAlertPayload struct {
+	UserID   string  `json:"user_id"`
+	Username string  `json:"username"`
+	Lat      float64 `json:"lat"`
+	Lng      float64 `json:"lng"`
 }
 
 // Payload for broadcasting all user locations from the server

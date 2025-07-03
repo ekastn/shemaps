@@ -5,6 +5,10 @@ import { useAuth } from "./AuthContext";
 import { useLoading } from "./LoadingContext";
 import { websocketService } from "../services/websocketService";
 
+import { useMap } from "@vis.gl/react-google-maps";
+import { useNotifications } from "@/hooks/useNotifications";
+import type { Coordinate } from "@/lib/types";
+
 interface RealtimeContextType {
     otherUsers: UserLocation[];
     sendLocation: (lat: number, lng: number) => void;
@@ -20,15 +24,21 @@ export const RealtimeProvider = ({ children }: { children: ReactNode }) => {
     const [isPanicMode, setIsPanicMode] = useState(false);
     const { isAuthenticated, deviceId, user } = useAuth();
     const { setRealtimeLoaded } = useLoading();
+    const { showPanicAlert } = useNotifications();
 
     useEffect(() => {
         const handleMessage = (message: any) => {
-            if (message.type === "all_users_locations") {
-                if (!message.payload.users) return;
-                const filteredUsers = message.payload.users.filter(
-                    (u: UserLocation) => u.device_id !== deviceId
-                );
-                setOtherUsers(filteredUsers);
+            switch (message.type) {
+                case "all_users_locations":
+                    if (!message.payload.users) return;
+                    const filteredUsers = message.payload.users.filter(
+                        (u: UserLocation) => u.device_id !== deviceId
+                    );
+                    setOtherUsers(filteredUsers);
+                    break;
+                case "panic_alert":
+                    showPanicAlert(message.payload);
+                    break;
             }
         };
 
@@ -84,7 +94,9 @@ export const RealtimeProvider = ({ children }: { children: ReactNode }) => {
     }, [isAuthenticated, deviceId]);
 
     return (
-        <RealtimeContext.Provider value={{ otherUsers, sendLocation, triggerPanic, isPanicMode, resolvePanic }}>
+        <RealtimeContext.Provider
+            value={{ otherUsers, sendLocation, triggerPanic, isPanicMode, resolvePanic }}
+        >
             {children}
         </RealtimeContext.Provider>
     );

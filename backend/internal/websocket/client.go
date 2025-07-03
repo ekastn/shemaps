@@ -89,8 +89,9 @@ func (c *Client) ReadPump() {
 			c.LastLng = loc.Lng
 		case MessageTypeTriggerPanic:
 			c.IsInPanic = true
+			c.Hub.BroadcastPanicAlert(c)
 		case MessageTypeResolvePanic:
-            c.IsInPanic = false
+			c.IsInPanic = false
 		}
 
 		c.Hub.Broadcast <- c

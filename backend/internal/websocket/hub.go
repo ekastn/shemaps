@@ -90,3 +90,35 @@ func (h *Hub) GetAllUserLocations() []UserLocation {
 	}
 	return locations
 }
+
+func (h *Hub) BroadcastPanicAlert(panickingClient *Client) {
+	log.Println("[BroadcastPanicAlert] bradcasting panic allert")
+	h.clientsMux.RLock()
+	defer h.clientsMux.RUnlock()
+
+	payload := PanicAlertPayload{
+		UserID:   panickingClient.DeviceID.String(),
+		Username: "A Shemaps User", // FIXME: get real username
+		Lat:      panickingClient.LastLat,
+		Lng:      panickingClient.LastLng,
+	}
+
+	message := Message{Type: MessageTypePanicAlert, Payload: payload}
+
+	msgBytes, err := json.Marshal(message)
+	if err != nil {
+		log.Printf("error marshalling panic alert: %v", err)
+		return
+	}
+
+	for deviceID, client := range h.clients {
+		if deviceID == panickingClient.DeviceID {
+			continue // Don't send the alert to the user who triggered it
+		}
+		select {
+		case client.Send <- msgBytes:
+		default:
+			log.Printf("Client send buffer full, skipping: %s", client.DeviceID)
+		}
+	}
+}
