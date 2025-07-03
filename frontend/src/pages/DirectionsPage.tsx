@@ -64,7 +64,7 @@ export const DirectionsPage = () => {
     return (
         <>
             {/* Header */}
-            <div className="relative z-10 p-4 bg-white  rounded-b-2xl">
+            <div className="relative z-10 p-4 rounded-b-2xl">
                 {/* Top component */}
                 <div className="bg-white rounded-xl shadow-lg p-4">
                     <div className="flex items-center justify-between">

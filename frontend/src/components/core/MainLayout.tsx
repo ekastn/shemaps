@@ -17,7 +17,7 @@ export const MainLayout: React.FC = () => {
             />
 
             <Toaster position="top-center" />
-            <main>
+            <main className="relative h-screen w-full max-w-md mx-auto overflow-hidden pointer-events-none">
                 <Outlet />
             </main>
         </div>
