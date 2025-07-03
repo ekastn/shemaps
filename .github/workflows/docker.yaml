@@ -1,4 +1,4 @@
-name: Docker pipeling
+name: Docker pipeline
 
 on:
  push:
