@@ -25,7 +25,7 @@ func LoadConfig() *Config {
 	addr := env.GetString("ADDR", ":80")
 	pgURL := env.GetString("POSTGRES_URL", "")
 	jwtSecret := env.GetString("JWT_SECRET", "super-secret-key")
-	allowedOriginsStr := env.GetString("ALLOWED_ORIGINS", "http://localhost:5173")
+	allowedOriginsStr := env.GetString("ALLOWED_ORIGINS", "http://localhost:5173,capacitor://localhost")
 	allowedOrigins := []string{}
 	if allowedOriginsStr != "" {
 		allowedOrigins = splitAndTrim(allowedOriginsStr, ",")

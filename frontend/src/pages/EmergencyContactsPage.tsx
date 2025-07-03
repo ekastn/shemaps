@@ -153,7 +153,7 @@ const EmergencyContactsPage = () => {
                     </CardContent>
                 </Card>
             </div>
-            <Dialog>
+            <Dialog open={true} onOpenChange={handleClose}>
                 <DialogTrigger asChild>
                     <div className="absolute bottom-8 right-6 ">
                         <div className="flex items-center justify-center w-16 h-16 rounded-full shadow-lg">

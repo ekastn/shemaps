@@ -1,5 +1,3 @@
-
-# Use a base image with Node.js and Java (for Android SDK)
 FROM ubuntu:22.04
 
 # Install Android SDK tools

@@ -1,11 +1,10 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "@/contexts/LocationContext";
 import { useRealtime } from "@/contexts/RealtimeContext";
 import { usePlacesSearch } from "@/hooks/usePlacesSearch";
-import { Home, Siren, User } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Home, Siren } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 export const PanicModePage = () => {
@@ -43,7 +42,7 @@ export const PanicModePage = () => {
                 <h1 className="mt-4 text-4xl font-bold">PANIC MODE</h1>
                 <p className="text-2xl">AKTIF</p>
             </div>
-            <div className="p-6 bg-white max-w-md rounded-t-2xl">
+            <div className="p-6 bg-white w-full max-w-md rounded-t-2xl">
                 <Card className="shadow-lg">
                     <CardContent className="p-6">
                         <div className="flex items-center">

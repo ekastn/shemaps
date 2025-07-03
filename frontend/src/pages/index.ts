@@ -1,5 +1,7 @@
 export { HomePage } from './HomePage';
-export { SearchPage } from './SearchPage';
+export { ReportLocationPage } from './ReportLocationPage';
+export { default as SearchPage } from './SearchPage';
+
 export { PinOnMapPage } from './PinOnMapPage';
 export { PlaceInfoPage } from './PlaceInfoPage';
 export { DirectionsPage } from './DirectionsPage';

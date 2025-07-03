@@ -36,7 +36,7 @@ export function PanicButton() {
             onTouchStartCapture={handlePressStart}
             onTouchEndCapture={handlePressEnd}
             className={`shadow-lg flex items-center justify-center transition-all duration-300 cursor-pointer ${
-                isPressing ? "bg-yellow-400" : isPanicMode ? "bg-green-500" : "bg-red-600"
+                isPressing ? "bg-primary" : isPanicMode ? "bg-green-500" : "bg-red-600"
             }`}
         >
             {isPanicMode ? (
