@@ -1,13 +1,12 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
-import type { ReactNode } from "react";
 import type { UserLocation } from "@/lib/types";
+import type { ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { websocketService } from "../services/websocketService";
 import { useAuth } from "./AuthContext";
 import { useLoading } from "./LoadingContext";
-import { websocketService } from "../services/websocketService";
 
-import { useMap } from "@vis.gl/react-google-maps";
 import { useNotifications } from "@/hooks/useNotifications";
-import type { Coordinate } from "@/lib/types";
+import { useMap } from "@vis.gl/react-google-maps";
 
 interface RealtimeContextType {
     otherUsers: UserLocation[];
@@ -23,8 +22,16 @@ export const RealtimeProvider = ({ children }: { children: ReactNode }) => {
     const [otherUsers, setOtherUsers] = useState<UserLocation[]>([]);
     const [isPanicMode, setIsPanicMode] = useState(false);
     const { isAuthenticated, deviceId, user } = useAuth();
-    const { setRealtimeLoaded } = useLoading();
+    const { setRealtimeLoaded, isMapsLoaded } = useLoading();
     const { showPanicAlert } = useNotifications();
+    const mapRef = useRef<google.maps.Map>(null);
+    const currentMap = isMapsLoaded ? useMap() : undefined;
+
+    useEffect(() => {
+        if (currentMap) {
+            mapRef.current = currentMap;
+        }
+    }, [currentMap]);
 
     useEffect(() => {
         const handleMessage = (message: any) => {
@@ -37,7 +44,7 @@ export const RealtimeProvider = ({ children }: { children: ReactNode }) => {
                     setOtherUsers(filteredUsers);
                     break;
                 case "panic_alert":
-                    showPanicAlert(message.payload);
+                    showPanicAlert(message.payload, mapRef.current);
                     break;
             }
         };

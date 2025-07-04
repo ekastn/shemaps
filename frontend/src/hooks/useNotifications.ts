@@ -1,7 +1,4 @@
 // src/hooks/useNotifications.ts
-import type { Coordinate } from "@/lib/types";
-import { useMap } from "@vis.gl/react-google-maps";
-import { useCallback } from "react";
 import { toast } from "sonner";
 
 // This payload type should match the one defined in the backend
@@ -12,33 +9,29 @@ interface PanicAlertPayload {
 }
 
 export function useNotifications() {
-    const map = useMap();
+    const showPanicAlert = (payload: PanicAlertPayload, map: google.maps.Map | undefined) => {
+        const handleViewLocation = () => {
+            if (!map) return;
+            map.panTo({ lat: payload.lat, lng: payload.lng });
+            map.setZoom(17);
+        };
+        console.log("showPanicAlert map", map);
 
-    const handleViewLocation = useCallback(
-        (coords: Coordinate) => {
-            if (map) {
-                map.panTo(coords);
-                map.setZoom(17);
-            }
-        },
-        [map]
-    );
-
-    const showPanicAlert = useCallback(
-        (payload: PanicAlertPayload) => {
-            toast.error("Emergency Alert", {
-                description: `${payload.username} has triggered a panic alert nearby.`,
-                duration: 15000, // Make the toast stay on screen longer
-                action: {
-                    label: "View on Map",
-                    onClick: () => {
-                        handleViewLocation({ lat: payload.lat, lng: payload.lng });
-                    },
+        toast.error("Emergency Alert", {
+            description: `${payload.username} has triggered a panic alert nearby.`,
+            duration: 15000, // Make the toast stay on screen longer
+            action: {
+                label: "View",
+                onClick: () => {
+                    handleViewLocation();
                 },
-            });
-        },
-        [map]
-    );
+            },
+            actionButtonStyle: {
+                backgroundColor: "hsl(var(--primary))",
+                color: "hsl(var(--primary-foreground))",
+            },
+        });
+    };
 
     return { showPanicAlert };
 }

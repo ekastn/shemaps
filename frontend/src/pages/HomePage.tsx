@@ -24,14 +24,6 @@ export const HomePage = () => {
                     >
                         <Menu className="w-6 h-6" />
                     </Button>
-                    {/* // notification */}
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        className="bg-white shadow-md size-12 rounded-full cursor-pointer"
-                    >
-                        <Bell className="w-6 h-6" />
-                    </Button>
                 </div>
             </div>
 
