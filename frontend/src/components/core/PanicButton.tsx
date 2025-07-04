@@ -5,7 +5,12 @@ import { Button } from "@/components/ui/button";
 import { ShieldAlert, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router";
 
-export function PanicButton() {
+interface PanicButtonProps {
+    variant?: "default" | "rounded";
+    size?: number; // New: size in pixels for width and height
+}
+
+export function PanicButton({ variant = "default", size = 12 }: PanicButtonProps) {
     const { triggerPanic, isPanicMode, resolvePanic } = useRealtime();
     const [isPressing, setIsPressing] = useState(false);
     const navigate = useNavigate();
@@ -35,7 +40,7 @@ export function PanicButton() {
             onMouseUpCapture={handlePressEnd}
             onTouchStartCapture={handlePressStart}
             onTouchEndCapture={handlePressEnd}
-            className={`shadow-lg flex items-center justify-center transition-all duration-300 cursor-pointer ${
+            className={`shadow-lg flex items-center justify-center transition-all duration-300 cursor-pointer ${variant === "rounded" ? `rounded-full w-${size} h-${size}` : ""} ${
                 isPressing ? "bg-primary" : isPanicMode ? "bg-green-500" : "bg-red-600"
             }`}
         >
@@ -44,7 +49,7 @@ export function PanicButton() {
             ) : (
                 <div className="flex items-center justify-center">
                     <ShieldAlert className="size-6 text-white" />
-                    <h3 className="text-lg">Panic</h3>
+                    {variant !== "rounded" && <h3 className="text-lg">Panic</h3>}
                 </div>
             )}
 

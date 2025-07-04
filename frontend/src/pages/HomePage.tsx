@@ -1,11 +1,11 @@
-import { useNavigate } from "react-router";
+import { SMSearchBar } from "@/components/SMSearch/SMSearchBar";
+import { MainSheet } from "@/components/core/MainSheet";
+import { PanicButton } from "@/components/core/PanicButton";
 import { SMLocationButton } from "@/components/maps/SMLocationButton";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Bell, MapPin, Menu, Search, Users } from "lucide-react";
-import { SMSearchBar } from "@/components/SMSearch/SMSearchBar";
-import { PanicButton } from "@/components/core/PanicButton";
-import { MainSheet } from "@/components/core/MainSheet";
+import { Menu } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 export const HomePage = () => {
     const [opehSheen, setOpenSheen] = useState(false);

@@ -25,29 +25,31 @@ export const SearchPage = () => {
 
     return (
         <div className="absolute inset-0 z-10 pointer-events-auto">
-            <div className="h-full w-full flex flex-col p-2">
-                <div className="bg-white p-4 sticky top-0 z-10">
-                    <SMSearchBar
-                        value={searchQuery}
-                        onChange={setSearchQuery}
-                        onBack={() => navigate(-1)}
-                        isSearchMode={true}
-                        autoFocus={true}
-                    />
+            <div className="h-full w-full flex flex-col">
+                <div className="bg-white p-4 rounded-b-2xl">
+                    <div className="sticky top-0 z-10 mb-2">
+                        <SMSearchBar
+                            value={searchQuery}
+                            onChange={setSearchQuery}
+                            onBack={() => navigate(-1)}
+                            isSearchMode={true}
+                            autoFocus={true}
+                        />
+                    </div>
+
+                    <div className="border-b border-gray-200">
+                        <Button
+                            variant="outline"
+                            className="w-full flex items-center justify-center gap-2 h-12 rounded-md border-gray-300"
+                            onClick={() => navigate("/pin")}
+                        >
+                            <MapPin className="w-5 h-5 text-gray-500" />
+                            <span>Choose on Map</span>
+                        </Button>
+                    </div>
                 </div>
 
-                <div className="bg-white p-4 border-b border-gray-200">
-                    <Button
-                        variant="outline"
-                        className="w-full flex items-center justify-center gap-2 h-12 rounded-md border-gray-300"
-                        onClick={() => navigate("/pin")}
-                    >
-                        <MapPin className="w-5 h-5 text-gray-500" />
-                        <span>Choose on Map</span>
-                    </Button>
-                </div>
-
-                <div className="flex-1 mt-4 overflow-y-auto">
+                <div className="flex-1 mt-4 overflow-y-auto p-2">
                     <SearchResults
                         searchQuery={searchQuery}
                         recentSearches={recentSearches}

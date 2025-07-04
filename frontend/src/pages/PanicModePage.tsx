@@ -34,13 +34,13 @@ export const PanicModePage = () => {
     };
 
     return (
-        <div className="flex flex-col h-screen items-center justify-center bg-[#D93F8A]">
+        <div className="flex flex-col h-screen items-center justify-center bg-red-500">
             <div className="flex flex-col items-center justify-center flex-grow text-white">
                 <div className="p-6 bg-white/20 rounded-full">
                     <Siren size={64} className="text-white" />
                 </div>
                 <h1 className="mt-4 text-4xl font-bold">PANIC MODE</h1>
-                <p className="text-2xl">AKTIF</p>
+                <p className="text-2xl">Activated</p>
             </div>
             <div className="p-6 bg-white w-full max-w-md rounded-t-2xl">
                 <Card className="shadow-lg">
@@ -48,7 +48,7 @@ export const PanicModePage = () => {
                         <div className="flex items-center">
                             <Home className="mr-4 text-gray-500" />
                             <div>
-                                <p className="text-gray-500">Lokasi saat ini:</p>
+                                <p className="text-gray-500">Current Location:</p>
                                 <p className="font-semibold">{locationName}</p>
                             </div>
                         </div>
@@ -71,7 +71,7 @@ export const PanicModePage = () => {
                     className="w-full mt-4 bg-primary hover:bg-indigo-700"
                     onClick={handleCancel}
                 >
-                    Batalkan
+                    Cencel
                 </Button>
             </div>
         </div>

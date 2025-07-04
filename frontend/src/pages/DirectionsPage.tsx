@@ -82,10 +82,23 @@ export const DirectionsPage = () => {
                     <div className="p-6 max-h-[60vh] overflow-y-auto">
                         <div>
                             <div className="flex items-start justify-between">
-                                <h1 className="text-2xl font-bold mb-1">
-                                    {routes[selectedRouteIndex].legs[0].distance?.text} ({" "}
-                                    {routes[selectedRouteIndex].legs[0].duration?.text})
-                                </h1>
+                                <div className="flex items-center">
+                                    <h1 className="text-2xl font-bold mb-1 mr-2">
+                                        {routes[selectedRouteIndex].legs[0].distance?.text}
+                                    </h1>
+                                    <div
+                                        className={`px-3 py-1 rounded-md text-sm font-medium
+                                    ${
+                                        routes[selectedRouteIndex].safety_level === "SAFE"
+                                            ? "bg-green-100 text-green-800"
+                                            : routes[selectedRouteIndex].safety_level === "CAUTIOUS"
+                                              ? "bg-yellow-100 text-yellow-800"
+                                              : "bg-red-100 text-red-800"
+                                    }`}
+                                    >
+                                        {routes[selectedRouteIndex].safety_level}
+                                    </div>
+                                </div>
                                 <Button
                                     variant="ghost"
                                     size="icon"
@@ -97,6 +110,7 @@ export const DirectionsPage = () => {
                                 </Button>
                             </div>
                             <p className="text-gray-600">{routes[selectedRouteIndex].summary}</p>
+                            <p className="text-gray-600">{routes[selectedRouteIndex].legs[0].duration?.text}</p>
                         </div>
                     </div>
                 </div>
