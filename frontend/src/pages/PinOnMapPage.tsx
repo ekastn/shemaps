@@ -4,12 +4,14 @@ import { useMap } from "@vis.gl/react-google-maps";
 import { ArrowLeft, MapPin } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { useTutorial } from "@/components/core/Tutorial";
 
 export const PinOnMapPage = () => {
     const navigate = useNavigate();
     const map = useMap();
     const { handleLocationSelect, getPlaceFromCoordinates } = usePlaces();
     const [isGeocoding, setIsGeocoding] = useState(false);
+    const { advanceTutorial } = useTutorial();
 
     const handleConfirmPin = async () => {
         if (!map) return;
@@ -27,6 +29,7 @@ export const PinOnMapPage = () => {
 
         if (!location) return;
         await handleLocationSelect(location);
+        advanceTutorial(9); // Advance tutorial after confirming pin
     };
 
     return (
@@ -44,7 +47,7 @@ export const PinOnMapPage = () => {
                 <Button
                     onClick={handleConfirmPin}
                     size="sm"
-                    className="flex items-center space-x-1 bg-primary"
+                    className="flex items-center space-x-1 bg-primary confirm-pin-tutorial-target"
                     disabled={isGeocoding}
                 >
                     {isGeocoding ? "Loading..." : "OK"}

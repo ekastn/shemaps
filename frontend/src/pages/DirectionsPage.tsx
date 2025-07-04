@@ -6,10 +6,14 @@ import { CircleDot, MapPin, X } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
+import { useTutorial } from "@/components/core/Tutorial";
+import { SMLocationButton } from "@/components/maps/SMLocationButton";
+import { PanicButton } from "@/components/core/PanicButton";
 
 export const DirectionsPage = () => {
     const navigate = useNavigate();
     const { currentCoordinate, selectedLocation } = useLocation();
+    const { advanceTutorial } = useTutorial();
 
     const { routes, calculateRoute, isLoading, error, selectedRouteIndex, clearDirections } =
         useDirections();
@@ -35,8 +39,9 @@ export const DirectionsPage = () => {
                 (routes[selectedRouteIndex].bounds as any).northeast
             );
             map.fitBounds(bounds);
+            advanceTutorial(13); // Advance tutorial after route is displayed
         }
-    }, [map, routes, selectedRouteIndex]);
+    }, [map, routes, selectedRouteIndex, advanceTutorial]);
 
     if (!selectedLocation) {
         clearDirections();
@@ -78,9 +83,17 @@ export const DirectionsPage = () => {
             </div>
 
             {routes.length > 0 && (
-                <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-lg pointer-events-auto overflow-hidden">
-                    <div className="p-6 max-h-[60vh] overflow-y-auto">
-                        <div>
+                <div className="absolute bottom-0 left-0 right-0">
+                    <div className="flex items-center justify-between p-4 gap-y-2 pointer-events-auto">
+                        <SMLocationButton
+                            className="location-button-tutorial-target"
+                        />
+                        <PanicButton
+                            className="panic-button-tutorial-target"
+                        />
+                    </div>
+                    <div className="p-6 max-h-[60vh] bg-white overflow-y-auto rounded-t-3xl shadow-lg pointer-events-auto overflow-hidden">
+                        <div className="route-info-tutorial-target">
                             <div className="flex items-start justify-between">
                                 <div className="flex items-center">
                                     <h1 className="text-2xl font-bold mb-1 mr-2">
@@ -110,7 +123,9 @@ export const DirectionsPage = () => {
                                 </Button>
                             </div>
                             <p className="text-gray-600">{routes[selectedRouteIndex].summary}</p>
-                            <p className="text-gray-600">{routes[selectedRouteIndex].legs[0].duration?.text}</p>
+                            <p className="text-gray-600">
+                                {routes[selectedRouteIndex].legs[0].duration?.text}
+                            </p>
                         </div>
                     </div>
                 </div>

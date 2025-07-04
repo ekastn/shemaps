@@ -8,9 +8,11 @@ import { useNavigate } from "react-router";
 interface PanicButtonProps {
     variant?: "default" | "rounded";
     size?: number; // New: size in pixels for width and height
+    className?: string;
+    onClick?: () => void;
 }
 
-export function PanicButton({ variant = "default", size = 12 }: PanicButtonProps) {
+export function PanicButton({ variant = "default", size = 12, className, onClick }: PanicButtonProps) {
     const { triggerPanic, isPanicMode, resolvePanic } = useRealtime();
     const [isPressing, setIsPressing] = useState(false);
     const navigate = useNavigate();
@@ -40,7 +42,8 @@ export function PanicButton({ variant = "default", size = 12 }: PanicButtonProps
             onMouseUpCapture={handlePressEnd}
             onTouchStartCapture={handlePressStart}
             onTouchEndCapture={handlePressEnd}
-            className={`shadow-lg flex items-center justify-center transition-all duration-300 cursor-pointer ${variant === "rounded" ? `rounded-full w-${size} h-${size}` : ""} ${
+            onClick={onClick}
+            className={`shadow-lg flex items-center justify-center transition-all duration-300 cursor-pointer ${variant === "rounded" ? `rounded-full w-${size} h-${size}` : ""} ${className} ${
                 isPressing ? "bg-primary" : isPanicMode ? "bg-green-500" : "bg-red-600"
             }`}
         >

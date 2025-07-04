@@ -4,6 +4,7 @@ import { useMap } from "@vis.gl/react-google-maps";
 import { Bookmark, Navigation, Shield, X } from "lucide-react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
+import { useTutorial } from "@/components/core/Tutorial";
 
 interface PlaceInfoPageProps {
     isNewPlace?: boolean;
@@ -12,6 +13,7 @@ interface PlaceInfoPageProps {
 export const PlaceInfoPage = ({ isNewPlace = false }: PlaceInfoPageProps) => {
     const navigate = useNavigate();
     const { selectedLocation, setSelectedLocation } = useLocation();
+    const { advanceTutorial } = useTutorial();
 
     if (!selectedLocation) {
         navigate("/");
@@ -57,8 +59,8 @@ export const PlaceInfoPage = ({ isNewPlace = false }: PlaceInfoPageProps) => {
                     <Button
                         variant="outline"
                         size="sm"
-                        className="flex-1 gap-2 rounded-xl bg-primary text-white hover:bg-pink-700 focus-visible:ring-pink-500"
-                        onClick={() => navigate("/directions")}
+                        className="flex-1 gap-2 rounded-xl bg-primary text-white hover:bg-pink-700 focus-visible:ring-pink-500 directions-button-tutorial-target"
+                        onClick={() => { navigate("/directions"); advanceTutorial(10); }}
                     >
                         <Navigation className="h-4 w-4" />
                         <span>Directions</span>
@@ -66,8 +68,8 @@ export const PlaceInfoPage = ({ isNewPlace = false }: PlaceInfoPageProps) => {
                     <Button
                         variant="outline"
                         size="sm"
-                        className="flex-1 gap-2 rounded-xl text-red-600 hover:text-red-700"
-                        onClick={() => navigate("/report")}
+                        className="flex-1 gap-2 rounded-xl text-red-600 hover:text-red-700 report-button-tutorial-target"
+                        onClick={() => { navigate("/report"); advanceTutorial(11); }}
                     >
                         <Shield className="h-4 w-4" />
                         <span className="text-current">Report</span>

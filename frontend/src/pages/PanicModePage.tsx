@@ -68,7 +68,7 @@ export const PanicModePage = () => {
                     </CardContent>
                 </Card>
                 <Button
-                    className="w-full mt-4 bg-primary hover:bg-indigo-700"
+                    className="w-full mt-4 bg-primary hover:bg-indigo-700 cancel-panic-button-tutorial-target"
                     onClick={handleCancel}
                 >
                     Cencel

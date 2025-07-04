@@ -122,7 +122,7 @@ export function SMMap({
                                 key={index}
                                 path={path}
                                 strokeColor={getRouteColor(route.safety_level)} // <-- Langsung gunakan safety_level!
-                                strokeOpacity={index === selectedRouteIndex ? 1.0 : 0.5}
+                                strokeOpacity={index === selectedRouteIndex ? 1.0 : 0.7}
                                 strokeWeight={index === selectedRouteIndex ? 8 : 6}
                                 zIndex={index === selectedRouteIndex ? 2 : 1}
                                 onClick={() => setSelectedRouteIndex(index)}

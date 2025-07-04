@@ -1,6 +1,8 @@
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { ContactList } from "./ContactList";
-import { X, XIcon } from "lucide-react";
+import { XIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useTutorial } from "./Tutorial";
 
 interface MainSheetProps {
     open: boolean;
@@ -8,6 +10,13 @@ interface MainSheetProps {
 }
 
 export function MainSheet({ open, onOpenChange }: MainSheetProps) {
+    const { advanceTutorial, setRun } = useTutorial();
+
+    const handleStartTutorial = () => {
+        setRun(true);
+        onOpenChange(false); // Close the sheet after starting tutorial
+    };
+
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent side="left" className="w-full sm:w-80 p-0 bg-primary">
@@ -23,7 +32,16 @@ export function MainSheet({ open, onOpenChange }: MainSheetProps) {
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-4 bg-white rounded-t-xl">
-                        <ContactList />
+                        <div className="emergency-contacts-tutorial-target">
+                            <ContactList />
+                        </div>
+                        <Button
+                            variant="outline"
+                            className="w-full mt-4"
+                            onClick={handleStartTutorial}
+                        >
+                            Start Tutorial
+                        </Button>
                     </div>
                     <div className="text-center text-xs bg-white text-gray-500 py-4">
                         <p>Shemaps BETA</p>

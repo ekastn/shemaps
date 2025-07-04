@@ -11,6 +11,7 @@ interface SearchResultsProps {
     isLoading: boolean;
     error: string | null;
     onSuggestionSelect: (suggestion: Location) => Promise<void>;
+    className?: string;
 }
 
 export const SearchResults = ({
@@ -20,6 +21,7 @@ export const SearchResults = ({
     isLoading,
     error,
     onSuggestionSelect,
+    className,
 }: SearchResultsProps) => {
     if (isLoading) {
         return (
@@ -47,7 +49,7 @@ export const SearchResults = ({
     }
 
     return (
-        <Card className="shadow-lg rounded-md py-2 overflow-y-auto">
+        <Card className={`shadow-lg rounded-md py-2 overflow-y-auto ${className}`}>
             <CardContent className="p-0">
                 {searchQuery === "" ? (
                     <div>

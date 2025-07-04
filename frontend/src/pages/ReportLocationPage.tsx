@@ -6,8 +6,9 @@ import { useSafetyReports } from "@/contexts/SafetyReportContext";
 import { submitSafetyReport } from '@/services/reportService';
 import { useMap } from "@vis.gl/react-google-maps";
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { useTutorial } from "@/components/core/Tutorial";
 
 export const ReportLocationPage = () => {
     const navigate = useNavigate();
@@ -15,6 +16,7 @@ export const ReportLocationPage = () => {
     const { selectedLocation, setSelectedLocation } = useLocation();
     const { jwtToken, deviceId } = useAuth();
     const map = useMap();
+    const { advanceTutorial } = useTutorial();
     
     const [safetyLevel, setSafetyLevel] = useState<"DANGEROUS" | "CAUTIOUS" | "SAFE">("DANGEROUS");
     const [description, setDescription] = useState("");
@@ -32,6 +34,7 @@ export const ReportLocationPage = () => {
         if (tagInput.trim() && !tags.includes(tagInput.trim())) {
             setTags([...tags, tagInput.trim()]);
             setTagInput("");
+            advanceTutorial(15); // Advance tutorial after adding a tag
         }
     };
 
@@ -67,6 +70,7 @@ export const ReportLocationPage = () => {
                 await fetchReportsInBounds(map.getBounds()!);
             }
             
+            advanceTutorial(16); // Advance tutorial after submitting report
             navigate("/");
         } catch (err) {
             console.error("Error submitting report:", err);
@@ -108,13 +112,13 @@ export const ReportLocationPage = () => {
                         </p>
                     </div>
                     
-                    <div>
+                    <div className="safety-level-selection-tutorial-target">
                         <h3 className="text-sm font-medium mb-2">Safety Level</h3>
                         <div className="grid grid-cols-3 gap-2">
                             <Button 
                                 type="button" 
                                 variant={safetyLevel === "DANGEROUS" ? "destructive" : "outline"}
-                                onClick={() => setSafetyLevel("DANGEROUS")}
+                                onClick={() => { setSafetyLevel("DANGEROUS"); advanceTutorial(14); }}
                                 className="w-full"
                             >
                                 Dangerous
@@ -122,7 +126,7 @@ export const ReportLocationPage = () => {
                             <Button 
                                 type="button" 
                                 variant={safetyLevel === "CAUTIOUS" ? "secondary" : "outline"}
-                                onClick={() => setSafetyLevel("CAUTIOUS")}
+                                onClick={() => { setSafetyLevel("CAUTIOUS"); advanceTutorial(14); }}
                                 className="w-full"
                             >
                                 Caution
@@ -130,7 +134,7 @@ export const ReportLocationPage = () => {
                             <Button 
                                 type="button" 
                                 variant={safetyLevel === "SAFE" ? "default" : "outline"}
-                                onClick={() => setSafetyLevel("SAFE")}
+                                onClick={() => { setSafetyLevel("SAFE"); advanceTutorial(14); }}
                                 className="w-full"
                             >
                                 Safe
@@ -138,7 +142,7 @@ export const ReportLocationPage = () => {
                         </div>
                     </div>
                     
-                    <div>
+                    <div className="description-tags-tutorial-target">
                         <h3 className="text-sm font-medium mb-2">Description</h3>
                         <textarea 
                             value={description}
@@ -148,7 +152,7 @@ export const ReportLocationPage = () => {
                         />
                     </div>
                     
-                    <div>
+                    <div className="description-tags-tutorial-target">
                         <h3 className="text-sm font-medium mb-2">Tags</h3>
                         <div className="flex items-center space-x-2">
                             <Input
@@ -206,7 +210,7 @@ export const ReportLocationPage = () => {
                             type="button" 
                             onClick={handleSubmit}
                             disabled={isSubmitting}
-                            className="flex-1"
+                            className="flex-1 submit-report-tutorial-target"
                         >
                             {isSubmitting ? "Submitting..." : "Submit Report"}
                         </Button>

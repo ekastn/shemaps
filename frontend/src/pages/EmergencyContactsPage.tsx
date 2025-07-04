@@ -21,6 +21,7 @@ import { ArrowLeft, Edit, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Label } from "@/components/ui/label";
+import { useTutorial } from "@/components/core/Tutorial";
 
 const EmergencyContactsPage = () => {
     const navigate = useNavigate();
@@ -30,6 +31,7 @@ const EmergencyContactsPage = () => {
     const [error, setError] = useState<string | null>(null);
     const [newContactName, setNewContactName] = useState("");
     const [newContactPhone, setNewContactPhone] = useState("");
+    const { advanceTutorial } = useTutorial();
 
     const handleClose = () => {
         navigate(-1);
@@ -71,6 +73,7 @@ const EmergencyContactsPage = () => {
             setNewContactName("");
             setNewContactPhone("");
             fetchContacts();
+            advanceTutorial(17); // Advance tutorial after adding a contact
         } catch (err) {
             setError("Failed to add emergency contact.");
             console.error(err);
@@ -116,7 +119,7 @@ const EmergencyContactsPage = () => {
                     {error && <p className="text-center text-red-500">{error}</p>}
                 </div>
                 <Card>
-                    <CardContent className="p-0">
+                    <CardContent className="p-0 contact-list-tutorial-target">
                         {contacts.map((contact, index) => (
                             <div key={contact.id}>
                                 <div className="flex items-center gap-4 p-4">
@@ -155,7 +158,7 @@ const EmergencyContactsPage = () => {
             </div>
             <Dialog open={true} onOpenChange={handleClose}>
                 <DialogTrigger asChild>
-                    <div className="absolute bottom-8 right-6 ">
+                    <div className="absolute bottom-8 right-6 add-contact-button-tutorial-target">
                         <div className="flex items-center justify-center w-16 h-16 rounded-full shadow-lg">
                             <Plus className="w-8 h-8" />
                         </div>

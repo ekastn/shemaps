@@ -1,12 +1,23 @@
-import type React from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router";
 import { Toaster } from "../ui/sonner";
 import { SMMap } from "../maps/SMMap";
 import { useLocation } from "@/contexts/LocationContext";
+import { Tutorial } from "./Tutorial";
 
 export const MainLayout: React.FC = () => {
-    const { currentCoordinate, selectedLocation } = useLocation();
+    const { currentCoordinate, selectedLocation, setSelectedLocation } = useLocation();
     const defaultCenter = { lat: -6.2088, lng: 106.8456 };
+    const [runTutorial, setRunTutorial] = useState(false);
+    const [openMainSheet, setOpenMainSheet] = useState(false);
+
+    useEffect(() => {
+        const tutorialCompleted = localStorage.getItem('shemaps_tutorial_completed');
+        if (!tutorialCompleted) {
+            setRunTutorial(true);
+        }
+    }, []);
+
     return (
         <div className="flex min-h-screen bg-background">
             <SMMap
@@ -17,9 +28,11 @@ export const MainLayout: React.FC = () => {
             />
 
             <Toaster position="top-center" />
-            <main className="relative h-screen w-full max-w-md mx-auto overflow-hidden pointer-events-none">
-                <Outlet />
-            </main>
+            <Tutorial run={runTutorial} setRun={setRunTutorial}>
+                <main className="relative h-screen w-full max-w-md mx-auto overflow-hidden pointer-events-none">
+                    <Outlet context={{ setRunTutorial, setOpenMainSheet, openMainSheet, setSelectedLocation }} />
+                </main>
+            </Tutorial>
         </div>
     );
 };

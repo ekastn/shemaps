@@ -14,6 +14,7 @@ interface SMSearchBarProps {
     autoFocus?: boolean;
     readOnly?: boolean;
     debounceTimeout?: number;
+    className?: string;
 }
 
 export const SMSearchBar = ({
@@ -27,6 +28,7 @@ export const SMSearchBar = ({
     autoFocus = false,
     readOnly = false,
     debounceTimeout = 300,
+    className,
 }: SMSearchBarProps) => {
     const handleIconClick = () => {
         if (isSearchMode && onBack) {
@@ -70,7 +72,7 @@ export const SMSearchBar = ({
             <Input
                 onClick={!isSearchMode ? onClick : undefined}
                 placeholder={placeholder}
-                className={`pl-12 rounded-md ${
+                className={`pl-12 rounded-md ${className} ${
                     isSearchMode
                         ? "border-gray-300 h-11"
                         : "bg-white shadow-lg border-0 h-12 cursor-pointer"
