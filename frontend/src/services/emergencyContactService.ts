@@ -22,6 +22,19 @@ export const createEmergencyContact = async (token: string | null, deviceId: str
     return result.data;
 };
 
+export const updateEmergencyContact = async (token: string | null, deviceId: string | null, contactId: string, contact: { contact_name: string; phone_number: string }): Promise<EmergencyContact> => {
+    const result = await authenticatedFetch(`/contacts/${contactId}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(contact),
+        token,
+        deviceId,
+    });
+    return result.data;
+};
+
 export const deleteEmergencyContact = async (token: string | null, deviceId: string | null, contactId: string): Promise<void> => {
     await authenticatedFetch(`/contacts/${contactId}`, {
         method: "DELETE",

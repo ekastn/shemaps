@@ -111,7 +111,7 @@ func (a *app) setupRoute(h *handlers.Handlers) http.Handler {
 	r.Use(middleware.Recoverer)
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   a.cfg.AllowedOrigins,
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "X-Device-ID"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: false,
@@ -146,6 +146,7 @@ func (a *app) setupRoute(h *handlers.Handlers) http.Handler {
 
 			r.Get("/contacts", h.EmergencyContact.GetContacts)
 			r.Post("/contacts", h.EmergencyContact.CreateContact)
+			r.Patch("/contacts/{contactID}", h.EmergencyContact.UpdateContact)
 			r.Delete("/contacts/{contactID}", h.EmergencyContact.DeleteContact)
 		})
 

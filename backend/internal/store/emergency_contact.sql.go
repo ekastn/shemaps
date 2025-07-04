@@ -78,3 +78,32 @@ func (q *Queries) GetEmergencyContactsByUser(ctx context.Context, userID uuid.UU
 	}
 	return items, nil
 }
+
+const updateEmergencyContact = `-- name: UpdateEmergencyContact :one
+UPDATE emergency_contacts SET contact_name = $1, phone_number = $2 WHERE id = $3 AND user_id = $4 RETURNING id, user_id, contact_name, phone_number, created_at
+`
+
+type UpdateEmergencyContactParams struct {
+	ContactName string    `json:"contact_name"`
+	PhoneNumber string    `json:"phone_number"`
+	ID          uuid.UUID `json:"id"`
+	UserID      uuid.UUID `json:"user_id"`
+}
+
+func (q *Queries) UpdateEmergencyContact(ctx context.Context, arg UpdateEmergencyContactParams) (EmergencyContact, error) {
+	row := q.db.QueryRow(ctx, updateEmergencyContact,
+		arg.ContactName,
+		arg.PhoneNumber,
+		arg.ID,
+		arg.UserID,
+	)
+	var i EmergencyContact
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.ContactName,
+		&i.PhoneNumber,
+		&i.CreatedAt,
+	)
+	return i, err
+}

@@ -107,3 +107,45 @@ func (h *EmergencyContactHandler) DeleteContact(w http.ResponseWriter, r *http.R
 
 	utils.Success(w, http.StatusOK, map[string]string{"message": "Emergency contact deleted successfully"})
 }
+
+func (h *EmergencyContactHandler) UpdateContact(w http.ResponseWriter, r *http.Request) {
+	userID, ok := middleware.GetUserIDFromContext(r.Context())
+	if !ok {
+		utils.Error(w, http.StatusUnauthorized, "Unauthorized", "User ID not found in context")
+		return
+	}
+
+	parsedUserID, ok := userID.(uuid.UUID)
+	if !ok {
+		utils.Error(w, http.StatusInternalServerError, "Internal Server Error", "Failed to parse user ID")
+		return
+	}
+
+	contactIDStr := chi.URLParam(r, "contactID")
+	contactID, err := uuid.Parse(contactIDStr)
+	if err != nil {
+		utils.Error(w, http.StatusBadRequest, "Bad Request", "Invalid contact ID")
+		return
+	}
+
+	var req dto.UpdateEmergencyContactRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		utils.Error(w, http.StatusBadRequest, "Bad Request", "Invalid request payload")
+		return
+	}
+
+	params := store.UpdateEmergencyContactParams{
+		ID:          contactID,
+		UserID:      parsedUserID,
+		ContactName: req.ContactName,
+		PhoneNumber: req.PhoneNumber,
+	}
+
+	contact, err := h.service.UpdateEmergencyContact(r.Context(), params)
+	if err != nil {
+		utils.Error(w, http.StatusInternalServerError, "Internal Server Error", "Failed to update emergency contact")
+		return
+	}
+
+	utils.Success(w, http.StatusOK, dto.NewEmergencyContactResponse(contact))
+}

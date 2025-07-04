@@ -21,6 +21,7 @@ type Querier interface {
 	GetUserByDeviceID(ctx context.Context, deviceID uuid.UUID) (User, error)
 	GetUserByEmail(ctx context.Context, email *string) (User, error)
 	GetUserByID(ctx context.Context, id uuid.UUID) (User, error)
+	UpdateEmergencyContact(ctx context.Context, arg UpdateEmergencyContactParams) (EmergencyContact, error)
 	UpgradeGuestUser(ctx context.Context, arg UpgradeGuestUserParams) (User, error)
 }
 

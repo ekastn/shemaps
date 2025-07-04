@@ -9,8 +9,13 @@ import (
 
 // CreateEmergencyContactRequest defines the structure for creating a new emergency contact.
 type CreateEmergencyContactRequest struct {
-	ContactName string `json:"contact_name"`
-	PhoneNumber string `json:"phone_number"`
+	ContactName string `json:"contact_name" validate:"required"`
+	PhoneNumber string `json:"phone_number" validate:"required"`
+}
+
+type UpdateEmergencyContactRequest struct {
+	ContactName string `json:"contact_name" validate:"required"`
+	PhoneNumber string `json:"phone_number" validate:"required"`
 }
 
 // EmergencyContactResponse defines the structure for an emergency contact returned by the API.

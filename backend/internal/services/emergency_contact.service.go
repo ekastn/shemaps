@@ -31,3 +31,7 @@ func (s *EmergencyContactService) DeleteEmergencyContact(ctx context.Context, co
 		UserID: userID,
 	})
 }
+
+func (s *EmergencyContactService) UpdateEmergencyContact(ctx context.Context, arg store.UpdateEmergencyContactParams) (store.EmergencyContact, error) {
+	return s.querier.UpdateEmergencyContact(ctx, arg)
+}

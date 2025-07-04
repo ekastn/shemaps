@@ -5,11 +5,12 @@ import {
     createEmergencyContact,
     deleteEmergencyContact,
     getEmergencyContacts,
+    updateEmergencyContact,
 } from "@/services/emergencyContactService";
 import { Edit, Phone, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { AddContactDialog } from "./AddContactDialog";
+import { ContactFormDialog } from "./ContactFormDialog";
 
 export function ContactList() {
     const { jwtToken, deviceId } = useAuth();
@@ -17,8 +18,7 @@ export function ContactList() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [showAddContactDialog, setShowAddContactDialog] = useState(false);
-    const [newContactName, setNewContactName] = useState("");
-    const [newContactPhone, setNewContactPhone] = useState("");
+    const [editingContact, setEditingContact] = useState<EmergencyContact | null>(null);
 
     const fetchContacts = async () => {
         setIsLoading(true);
@@ -41,23 +41,20 @@ export function ContactList() {
         }
     }, [jwtToken, deviceId]);
 
-    const handleAddContact = async () => {
-        if (!newContactName || !newContactPhone) {
-            setError("Please fill in all fields.");
-            return;
-        }
+    const handleSaveContact = async (contactData: { contact_name: string; phone_number: string }) => {
         setIsLoading(true);
         setError(null);
         try {
-            await createEmergencyContact(jwtToken, deviceId, {
-                contact_name: newContactName,
-                phone_number: newContactPhone,
-            });
-            setNewContactName("");
-            setNewContactPhone("");
+            if (editingContact) {
+                await updateEmergencyContact(jwtToken, deviceId, editingContact.id, contactData);
+            } else {
+                await createEmergencyContact(jwtToken, deviceId, contactData);
+            }
+            setShowAddContactDialog(false);
+            setEditingContact(null);
             fetchContacts();
         } catch (err) {
-            setError("Failed to add emergency contact.");
+            setError(`Failed to ${editingContact ? "update" : "add"} emergency contact.`);
             console.error(err);
         } finally {
             setIsLoading(false);
@@ -108,7 +105,10 @@ export function ContactList() {
                             <p className="text-xs text-gray-600">{contact.phone_number}</p>
                         </div>
                         <div className="flex gap-2">
-                            <Button variant="ghost" size="icon" className="w-8 h-8">
+                            <Button variant="ghost" size="icon" className="w-8 h-8" onClick={() => {
+                                setEditingContact(contact);
+                                setShowAddContactDialog(true);
+                            }}>
                                 <Edit className="w-4 h-4 text-gray-600" />
                             </Button>
                             <Button
@@ -125,15 +125,15 @@ export function ContactList() {
                 ))}
             </div>
 
-            <AddContactDialog
+            <ContactFormDialog
                 open={showAddContactDialog}
-                handleClose={() => setShowAddContactDialog(false)}
-                handleAddContact={handleAddContact}
+                handleClose={() => {
+                    setShowAddContactDialog(false);
+                    setEditingContact(null);
+                }}
+                onSave={handleSaveContact}
                 isLoading={isLoading}
-                newContactName={newContactName}
-                setNewContactName={setNewContactName}
-                newContactPhone={newContactPhone}
-                setNewContactPhone={setNewContactPhone}
+                initialContact={editingContact}
             />
 
             {isLoading && <p className="text-center text-blue-500">Loading...</p>}
