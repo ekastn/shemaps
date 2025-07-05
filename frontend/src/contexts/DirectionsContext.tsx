@@ -34,7 +34,6 @@ export function DirectionsProvider({ children }: { children: ReactNode }) {
             destination: Coordinate,
         ): Promise<void> => {
             if (!map) {
-                setError("Directions service not available");
                 return;
             }
 

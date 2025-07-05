@@ -26,7 +26,7 @@ export const DirectionsPage = () => {
         } else {
             navigate(-1);
         }
-    }, [currentCoordinate, selectedLocation, calculateRoute, navigate]);
+    }, [selectedLocation, calculateRoute, navigate]);
 
     const map = useMap();
 
@@ -37,9 +37,8 @@ export const DirectionsPage = () => {
                 (routes[selectedRouteIndex].bounds as any).northeast
             );
             map.fitBounds(bounds);
-            advanceTutorial(13); // Advance tutorial after route is displayed
         }
-    }, [map, routes, selectedRouteIndex, advanceTutorial]);
+    }, [map, routes, selectedRouteIndex]);
 
     if (!selectedLocation) {
         clearDirections();
