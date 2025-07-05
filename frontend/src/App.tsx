@@ -5,7 +5,6 @@ import {
     PinOnMapPage,
     PlaceInfoPage,
     DirectionsPage,
-    EmergencyContactsPage,
     PanicModePage,
 } from "@/pages";
 import { ReportLocationPage } from "./pages/ReportLocationPage";
@@ -21,7 +20,6 @@ export default function App() {
                 <Route path="/place/:id" element={<PlaceInfoPage />} />
                 <Route path="/report" element={<ReportLocationPage />} />
                 <Route path="/directions" element={<DirectionsPage />} />
-                <Route path="/contacts" element={<EmergencyContactsPage />} />
             </Route>
             <Route path="/panic" element={<PanicModePage />} />
         </Routes>

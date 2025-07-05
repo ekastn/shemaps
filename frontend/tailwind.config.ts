@@ -52,8 +52,13 @@ const config = {
                     DEFAULT: "hsl(var(--card))",
                     foreground: "hsl(var(--card-foreground))",
                 },
-                "shemaps-green": "#D4E9E2",
-                "shemaps-red": "#E57373",
+                shemaps: {
+                    main: "var(--color-shemaps-main)",
+                    "light-shades": "var(--color-shemaps-light-shades)",
+                    "light-accent": "var(--color-shemaps-light-accent)",
+                    "dark-accent": "var(--color-shemaps-dark-accent)",
+                    "dark-shades": "var(--color-shemaps-dark-shades)",
+                }
             },
             borderRadius: {
                 lg: "var(--radius)",

@@ -43,8 +43,8 @@ export function PanicButton({ variant = "default", size = 12, className, onClick
             onTouchStartCapture={handlePressStart}
             onTouchEndCapture={handlePressEnd}
             onClick={onClick}
-            className={`shadow-lg flex items-center justify-center transition-all duration-300 cursor-pointer ${variant === "rounded" ? `rounded-full w-${size} h-${size}` : ""} ${className} ${
-                isPressing ? "bg-primary" : isPanicMode ? "bg-green-500" : "bg-red-600"
+            className={`shadow-lg flex items-center justify-center transition-all duration-300 cursor-pointer ${variant === "rounded" ? `rounded-full size-14` : "p-4"} ${className} ${
+                isPressing ? "bg-shemaps-dark-shades" : isPanicMode ? "bg-green-500" : "bg-shemaps-dark-accent"
             }`}
         >
             {isPanicMode ? (
@@ -58,7 +58,7 @@ export function PanicButton({ variant = "default", size = 12, className, onClick
 
             {isPressing && (
                 <div
-                    className="absolute inset-0 rounded-full bg-white opacity-50 animate-ping"
+                    className="absolute inset-0 rounded-full bg-shemaps-light-shades opacity-50 animate-ping"
                     style={{ animationDuration: "3s" }}
                 ></div>
             )}

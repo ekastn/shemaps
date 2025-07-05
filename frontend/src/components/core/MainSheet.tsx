@@ -2,7 +2,7 @@ import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/she
 import { ContactList } from "./ContactList";
 import { XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTutorial } from "./Tutorial";
+import { useTutorial } from "@/contexts/TutorialContext";
 
 interface MainSheetProps {
     open: boolean;
@@ -19,19 +19,19 @@ export function MainSheet({ open, onOpenChange }: MainSheetProps) {
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent side="left" className="w-full sm:w-80 p-0 bg-primary">
+            <SheetContent side="left" className="w-full sm:w-80 p-0 bg-shemaps-main">
                 <div className="h-full flex flex-col">
                     {/* Header */}
                     <div className="flex items-center justify-between p-4 text-white">
                         <SheetTitle className="flex items-center gap-2 text-3xl text-white">
-                            Shemaps
+                            Settings
                         </SheetTitle>
                         <SheetClose asChild>
                             <XIcon className="h-6 w-6" />
                         </SheetClose>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 bg-white rounded-t-xl">
+                    <div className="flex-1 overflow-y-auto p-4 bg-shemaps-light-shades rounded-t-xl">
                         <div className="emergency-contacts-tutorial-target">
                             <ContactList />
                         </div>
@@ -43,7 +43,7 @@ export function MainSheet({ open, onOpenChange }: MainSheetProps) {
                             Start Tutorial
                         </Button>
                     </div>
-                    <div className="text-center text-xs bg-white text-gray-500 py-4">
+                    <div className="text-center text-xs bg-shemaps-light-shades text-gray-500 py-4">
                         <p>Shemaps BETA</p>
                         <p>© 2025 Shemaps. All rights reserved.</p>
                     </div>

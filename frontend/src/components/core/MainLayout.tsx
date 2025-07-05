@@ -3,7 +3,7 @@ import { Outlet } from "react-router";
 import { Toaster } from "../ui/sonner";
 import { SMMap } from "../maps/SMMap";
 import { useLocation } from "@/contexts/LocationContext";
-import { Tutorial } from "./Tutorial";
+import { TutorialProvider } from "@/contexts/TutorialContext";
 
 export const MainLayout: React.FC = () => {
     const { currentCoordinate, selectedLocation, setSelectedLocation } = useLocation();
@@ -28,11 +28,11 @@ export const MainLayout: React.FC = () => {
             />
 
             <Toaster position="top-center" />
-            <Tutorial run={runTutorial} setRun={setRunTutorial}>
+            <TutorialProvider run={runTutorial} setRun={setRunTutorial}>
                 <main className="relative h-screen w-full max-w-md mx-auto overflow-hidden pointer-events-none">
                     <Outlet context={{ setRunTutorial, setOpenMainSheet, openMainSheet, setSelectedLocation }} />
                 </main>
-            </Tutorial>
+            </TutorialProvider>
         </div>
     );
 };

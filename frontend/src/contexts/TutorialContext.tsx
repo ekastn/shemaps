@@ -15,7 +15,7 @@ interface TutorialContextType {
 
 const TutorialContext = createContext<TutorialContextType | undefined>(undefined);
 
-export const Tutorial: React.FC<TutorialProps> = ({ run, setRun, children }) => {
+export const TutorialProvider: React.FC<TutorialProps> = ({ run, setRun, children }) => {
     const joyrideRef = useRef<any>(null); // Keeping 'any' for now to avoid immediate type errors with 'go'
 
     const [steps, setSteps] = useState<Step[]>([

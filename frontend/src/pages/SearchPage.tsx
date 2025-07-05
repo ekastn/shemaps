@@ -6,7 +6,7 @@ import { usePlaces } from "@/hooks/usePlaces";
 import { type Location } from "@/lib/types";
 import { MapPin } from "lucide-react";
 import { useNavigate } from "react-router";
-import { useTutorial } from "@/components/core/Tutorial";
+import { useTutorial } from "@/contexts/TutorialContext";
 
 export const SearchPage = () => {
     const navigate = useNavigate();
@@ -29,7 +29,7 @@ export const SearchPage = () => {
     return (
         <div className="absolute inset-0 z-10 pointer-events-auto">
             <div className="h-full w-full flex flex-col">
-                <div className="bg-white p-4 rounded-b-2xl">
+                <div className="bg-shemaps-main p-4 rounded-b-2xl">
                     <div className="sticky top-0 z-10 mb-2">
                         <SMSearchBar
                             value={searchQuery}
@@ -44,7 +44,7 @@ export const SearchPage = () => {
                     <div className="border-b border-gray-200">
                         <Button
                             variant="outline"
-                            className="w-full flex items-center justify-center gap-2 h-12 rounded-md border-gray-300 choose-on-map-tutorial-target"
+                            className="w-full bg-shemaps-light-shades flex items-center justify-center gap-2 h-12 rounded-md border-gray-300 choose-on-map-tutorial-target"
                             onClick={() => { navigate("/pin"); advanceTutorial(7); }}
                         >
                             <MapPin className="w-5 h-5 text-gray-500" />

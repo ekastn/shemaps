@@ -4,7 +4,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { useCallback, useEffect, useState } from "react";
 
 interface SMSearchBarProps {
-    value: string;
+    value?: string;
     placeholder?: string;
     isSearchMode?: boolean;
     onFocus?: () => void;
@@ -18,7 +18,7 @@ interface SMSearchBarProps {
 }
 
 export const SMSearchBar = ({
-    value: propValue,
+    value: propValue = "",
     placeholder = "Where do you want to go?",
     isSearchMode = false,
     onFocus,
@@ -72,10 +72,10 @@ export const SMSearchBar = ({
             <Input
                 onClick={!isSearchMode ? onClick : undefined}
                 placeholder={placeholder}
-                className={`pl-12 rounded-md ${className} ${
+                className={`pl-12 bg-shemaps-light-shades rounded-md ${className} ${
                     isSearchMode
                         ? "border-gray-300 h-11"
-                        : "bg-white shadow-lg border-0 h-12 cursor-pointer"
+                        : "shadow-lg border-0 h-12 cursor-pointer pointer-events-auto"
                 }`}
                 value={inputValue}
                 onChange={handleChange}

@@ -34,7 +34,7 @@ export const PanicModePage = () => {
     };
 
     return (
-        <div className="flex flex-col h-screen items-center justify-center bg-red-500">
+        <div className="flex flex-col h-screen items-center justify-center bg-shemaps-dark-accent">
             <div className="flex flex-col items-center justify-center flex-grow text-white">
                 <div className="p-6 bg-white/20 rounded-full">
                     <Siren size={64} className="text-white" />
@@ -42,7 +42,7 @@ export const PanicModePage = () => {
                 <h1 className="mt-4 text-4xl font-bold">PANIC MODE</h1>
                 <p className="text-2xl">Activated</p>
             </div>
-            <div className="p-6 bg-white w-full max-w-md rounded-t-2xl">
+            <div className="p-6 bg-shemaps-light-shades w-full max-w-md rounded-t-2xl">
                 <Card className="shadow-lg">
                     <CardContent className="p-6">
                         <div className="flex items-center">
@@ -68,7 +68,7 @@ export const PanicModePage = () => {
                     </CardContent>
                 </Card>
                 <Button
-                    className="w-full mt-4 bg-primary hover:bg-indigo-700 cancel-panic-button-tutorial-target"
+                    className="w-full mt-4 bg-shemaps-dark-shades hover:bg-shemaps-main cancel-panic-button-tutorial-target"
                     onClick={handleCancel}
                 >
                     Cencel

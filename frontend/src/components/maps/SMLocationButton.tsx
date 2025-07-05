@@ -12,12 +12,12 @@ export function SMLocationButton({ className, onClick }: SMLocationButtonProps) 
 
     return (
         <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
             onClick={() => { panToCurrentLocation(); onClick?.(); }}
-            className={`bg-white shadow-md size-12 rounded-full cursor-pointer ${className}`}
+            className={`bg-shemaps-main text-white shadow-md size-14 rounded-full cursor-pointer ${className}`}
         >
-            <LocateFixed className="h-5 w-5" />
+            <LocateFixed className="size-6" />
         </Button>
     );
 }

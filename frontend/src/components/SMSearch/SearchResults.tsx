@@ -49,7 +49,7 @@ export const SearchResults = ({
     }
 
     return (
-        <Card className={`shadow-lg rounded-md py-2 overflow-y-auto ${className}`}>
+        <Card className={`shadow-lg rounded-md py-2 overflow-y-auto bg-shemaps-light-shades ${className}`}>
             <CardContent className="p-0">
                 {searchQuery === "" ? (
                     <div>

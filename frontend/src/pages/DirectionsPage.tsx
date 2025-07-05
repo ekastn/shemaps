@@ -1,14 +1,12 @@
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { useDirections } from "@/contexts/DirectionsContext";
 import { useLocation } from "@/contexts/LocationContext";
+import { useTutorial } from "@/contexts/TutorialContext";
 import { useMap } from "@vis.gl/react-google-maps";
 import { CircleDot, MapPin, X } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
-import { useTutorial } from "@/components/core/Tutorial";
-import { SMLocationButton } from "@/components/maps/SMLocationButton";
-import { PanicButton } from "@/components/core/PanicButton";
 
 export const DirectionsPage = () => {
     const navigate = useNavigate();
@@ -56,47 +54,45 @@ export const DirectionsPage = () => {
 
     return (
         <>
-            <div className="relative z-10 p-4 rounded-b-2xl">
-                <div className="bg-white rounded-xl shadow-lg p-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex-grow ml-4">
-                            <div className="flex items-center space-x-4">
-                                <CircleDot className="size-6 text-blue-500" />
-                                <p className="text-lg font-medium text-blue-700">Your location</p>
-                            </div>
-                            <Separator className="my-2" />
-                            <div className="flex items-center space-x-4">
-                                <MapPin className="size-6 text-red-500" />
-                                <p className="text-lg font-medium text-gray-800">
-                                    {selectedLocation.name}
-                                </p>
+            <div className="absolute top-0 inset-x-0 bg-shemaps-main rounded-b-2xl shadow-lg z-10 pointer-events-auto">
+                <div className="relative z-10 p-4 rounded-b-2xl">
+                    <div className="bg-shemaps-light-shades rounded-xl shadow-lg p-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex-grow ml-4">
+                                <div className="flex items-center space-x-4">
+                                    <CircleDot className="size-6 text-blue-500" />
+                                    <p className="text-lg font-medium text-blue-700">
+                                        Your location
+                                    </p>
+                                </div>
+                                <Separator className="my-2" />
+                                <div className="flex items-center space-x-4">
+                                    <MapPin className="size-6 text-red-500" />
+                                    <p className="text-lg font-medium text-gray-800">
+                                        {selectedLocation.name}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    {isLoading && (
+                        <div className="mt-4 bg-shemaps-light-shades p-4 rounded-md">Finding routes...</div>
+                    )}
+                    {error && (
+                        <div className="mt-4 bg-shemaps-dark-accent text-red-800 p-4 rounded-md">
+                            Cannot find routes
+                        </div>
+                    )}
                 </div>
-                {isLoading && <div className="mt-4 bg-white p-4 rounded-md">Finding routes...</div>}
-                {error && (
-                    <div className="mt-4 bg-red-100 text-red-800 p-4 rounded-md">
-                        Cannot find routes
-                    </div>
-                )}
             </div>
 
             {routes.length > 0 && (
                 <div className="absolute bottom-0 left-0 right-0">
-                    <div className="flex items-center justify-between p-4 gap-y-2 pointer-events-auto">
-                        <SMLocationButton
-                            className="location-button-tutorial-target"
-                        />
-                        <PanicButton
-                            className="panic-button-tutorial-target"
-                        />
-                    </div>
-                    <div className="p-6 max-h-[60vh] bg-white overflow-y-auto rounded-t-3xl shadow-lg pointer-events-auto overflow-hidden">
+                    <div className="p-6 max-h-[60vh] bg-shemaps-main overflow-y-auto rounded-t-3xl shadow-lg pointer-events-auto overflow-hidden">
                         <div className="route-info-tutorial-target">
                             <div className="flex items-start justify-between">
                                 <div className="flex items-center">
-                                    <h1 className="text-2xl font-bold mb-1 mr-2">
+                                    <h1 className="text-2xl text-white font-bold mb-1 mr-2">
                                         {routes[selectedRouteIndex].legs[0].distance?.text}
                                     </h1>
                                     <div
@@ -117,13 +113,13 @@ export const DirectionsPage = () => {
                                     size="icon"
                                     onClick={handleBack}
                                     aria-label="Close"
-                                    className="pointer-events-auto bg-white/80 backdrop-blur-sm hover:bg-white"
+                                    className="pointer-events-auto text-white hover:bg-white"
                                 >
                                     <X className="h-5 w-5" />
                                 </Button>
                             </div>
-                            <p className="text-gray-600">{routes[selectedRouteIndex].summary}</p>
-                            <p className="text-gray-600">
+                            <p className="text-white">{routes[selectedRouteIndex].summary}</p>
+                            <p className="text-white">
                                 {routes[selectedRouteIndex].legs[0].duration?.text}
                             </p>
                         </div>
