@@ -1,6 +1,6 @@
 import { Map, AdvancedMarker, useMapsLibrary, useMap } from "@vis.gl/react-google-maps";
 import { cn, getRouteColor } from "@/lib/utils";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { Coordinate } from "@/lib/types";
 import { CircleDot, MapPin, Pin, ShieldAlert, ShieldQuestion, CircleUserRound } from "lucide-react";
 import { useLocation } from "@/contexts/LocationContext";
@@ -8,6 +8,7 @@ import { SMPolyline } from "./SMPolyline";
 import { useDirections } from "@/contexts/DirectionsContext";
 import { useSafetyReports } from "@/contexts/SafetyReportContext";
 import { useRealtime } from "@/contexts/RealtimeContext";
+import { SMRoutedPolyline } from "./SMRoutedPolyline";
 
 type SMMapProps = {
     center: Coordinate;
@@ -20,16 +21,16 @@ type SMMapProps = {
 
 // Definisikan gaya peta di luar komponen agar tidak dibuat ulang setiap render
 const mapStyles: google.maps.MapTypeStyle[] = [
-  {
-    featureType: "poi", // Target semua Points of Interest
-    elementType: "labels",
-    stylers: [{ visibility: "off" }],
-  },
-  {
-    featureType: "transit", // Target ikon transit (stasiun, halte)
-    elementType: "labels.icon",
-    stylers: [{ visibility: "off" }],
-  },
+    {
+        featureType: "poi", // Target semua Points of Interest
+        elementType: "labels",
+        stylers: [{ visibility: "off" }],
+    },
+    {
+        featureType: "transit", // Target ikon transit (stasiun, halte)
+        elementType: "labels.icon",
+        stylers: [{ visibility: "off" }],
+    },
 ];
 
 export function SMMap({
@@ -112,30 +113,24 @@ export function SMMap({
                     </AdvancedMarker>
                 ))}
                 {canRenderRoutes &&
-                    routes.map((route, index) => {
-                        const path = google.maps.geometry.encoding.decodePath(
-                            (route.overview_polyline as any).points
-                        ) as any as google.maps.LatLngLiteral[];
-
-                        return (
-                            <SMPolyline
-                                key={index}
-                                path={path}
-                                strokeColor={getRouteColor(route.safety_level)} // <-- Langsung gunakan safety_level!
-                                strokeOpacity={index === selectedRouteIndex ? 1.0 : 0.7}
-                                strokeWeight={index === selectedRouteIndex ? 8 : 6}
-                                zIndex={index === selectedRouteIndex ? 2 : 1}
-                                onClick={() => setSelectedRouteIndex(index)}
-                            />
-                        );
-                    })}
+                    routes.map((route, index) => (
+                        <SMRoutedPolyline
+                            key={index}
+                            route={route}
+                            index={index}
+                            selectedRouteIndex={selectedRouteIndex}
+                            setSelectedRouteIndex={setSelectedRouteIndex}
+                        />
+                    ))}
                 {otherUsers.map((user) => (
                     <AdvancedMarker
                         key={user.device_id}
                         position={{ lat: user.lat, lng: user.lng }}
                         title={`User ${user.device_id}`}
                     >
-                        <div className={`p-1 rounded-full shadow ${user.is_in_panic ? 'bg-red-500 animate-pulse' : 'bg-primary'}`}>
+                        <div
+                            className={`p-1 rounded-full shadow ${user.is_in_panic ? "bg-red-500 animate-pulse" : "bg-primary"}`}
+                        >
                             {user.is_in_panic ? (
                                 <ShieldAlert className="w-5 h-5 text-white" />
                             ) : (

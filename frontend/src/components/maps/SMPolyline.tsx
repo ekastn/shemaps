@@ -15,6 +15,7 @@ export function SMPolyline(props: SMPolylineProps) {
 
         const newPolyline = new google.maps.Polyline();
         setPolyline(newPolyline);
+        
 
         return () => {
             newPolyline.setMap(null);
@@ -28,7 +29,7 @@ export function SMPolyline(props: SMPolylineProps) {
         const { onClick, ...options } = props;
         polyline.setOptions(options);
         polyline.setPath(props.path);
-    }, [polyline, props]);
+    }, [polyline, props.path]);
 
     // handle click event
     useEffect(() => {
@@ -45,6 +46,7 @@ export function SMPolyline(props: SMPolylineProps) {
     useEffect(() => {
         if (!polyline || !map) return;
 
+        
         polyline.setMap(map);
     }, [polyline, map]);
 
