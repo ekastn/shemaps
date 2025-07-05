@@ -71,7 +71,7 @@ export const PanicModePage = () => {
                     className="w-full mt-4 bg-shemaps-dark-shades hover:bg-shemaps-main cancel-panic-button-tutorial-target"
                     onClick={handleCancel}
                 >
-                    Cencel
+                    Cancel
                 </Button>
             </div>
         </div>
