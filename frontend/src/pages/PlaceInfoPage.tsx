@@ -38,7 +38,7 @@ export const PlaceInfoPage = ({ isNewPlace = false }: PlaceInfoPageProps) => {
     return (
         <div className="absolute bottom-0 left-0 right-0 bg-shemaps-main rounded-t-2xl shadow-lg pointer-events-auto overflow-hidden">
             <div className="p-6 max-h-[60vh] overflow-y-auto">
-                <div className="mb-4 text-white">
+                <div className="mb-4 text-shemaps-primary">
                     <div className="flex items-start justify-between">
                         <h1 className="text-2xl font-bold mb-1">{selectedLocation.name}</h1>
                         <Button
@@ -51,7 +51,7 @@ export const PlaceInfoPage = ({ isNewPlace = false }: PlaceInfoPageProps) => {
                             <X className="h-5 w-5" />
                         </Button>
                     </div>
-                    <p className="text-shemaps-light-shades">{selectedLocation.address}</p>
+                    <p className="text-shemaps-primary/80">{selectedLocation.address}</p>
                 </div>
 
                 {/* Action Buttons */}

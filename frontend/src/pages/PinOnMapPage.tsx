@@ -34,7 +34,7 @@ export const PinOnMapPage = () => {
 
     return (
         <div className="pointer-events-auto">
-            <div className="absolute bottom-0 left-0 right-0 bg-shemaps-main text-white border-b border-gray-200 p-4 z-10 flex items-center justify-between rounded-t-2xl">
+            <div className="absolute bottom-0 left-0 right-0 bg-shemaps-main text-shemaps-primary border-b border-gray-200 p-4 z-10 flex items-center justify-between rounded-t-2xl">
                 <div className="flex items-center space-x-2">
                     <button
                         onClick={() => navigate(-1)}

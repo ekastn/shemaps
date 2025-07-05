@@ -91,7 +91,7 @@ export const DirectionsPage = () => {
                         <div className="route-info-tutorial-target">
                             <div className="flex items-start justify-between">
                                 <div className="flex items-center">
-                                    <h1 className="text-2xl text-white font-bold mb-1 mr-2">
+                                    <h1 className="text-2xl text-shemaps-primary font-bold mb-1 mr-2">
                                         {routes[selectedRouteIndex].legs[0].distance?.text}
                                     </h1>
                                     <div
@@ -112,13 +112,13 @@ export const DirectionsPage = () => {
                                     size="icon"
                                     onClick={handleBack}
                                     aria-label="Close"
-                                    className="pointer-events-auto text-white hover:bg-white"
+                                    className="pointer-events-auto text-shemaps-primary hover:bg-white"
                                 >
                                     <X className="h-5 w-5" />
                                 </Button>
                             </div>
-                            <p className="text-white">{routes[selectedRouteIndex].summary}</p>
-                            <p className="text-white">
+                            <p className="text-shemaps-primary/80">{routes[selectedRouteIndex].summary}</p>
+                            <p className="text-shemaps-primary/80">
                                 {routes[selectedRouteIndex].legs[0].duration?.text}
                             </p>
                         </div>

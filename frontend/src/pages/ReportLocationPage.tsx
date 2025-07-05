@@ -86,7 +86,7 @@ export const ReportLocationPage = () => {
 
     return (
         <div className="absolute bottom-0 left-0 right-0 bg-shemaps-main rounded-t-3xl shadow-lg pointer-events-auto overflow-hidden">
-            <div className="p-6 max-h-[60vh] overflow-y-auto text-white">
+            <div className="p-6 max-h-[60vh] overflow-y-auto text-shemaps-primary">
                 <div className="mb-4">
                     <div className="flex items-start justify-between">
                         <h1 className="text-2xl font-bold mb-1">Report Place</h1>
@@ -100,7 +100,7 @@ export const ReportLocationPage = () => {
                             <X className="h-5 w-5" />
                         </Button>
                     </div>
-                    <p className="text-shemaps-light-shades">
+                    <p className="text-shemaps-primary">
                         Share your experience to help keep others safe
                     </p>
                 </div>
@@ -185,7 +185,7 @@ export const ReportLocationPage = () => {
                                 onChange={(e) => setTagInput(e.target.value)}
                                 onKeyDown={handleKeyDown}
                                 placeholder="Add a tag (e.g., night, theft)"
-                                className=" border rounded-md ring-0 outline-none placeholder:text-muted/50 focus:outline-none"
+                                className=" border rounded-md ring-0 outline-none placeholder:text-shemaps-primary/50 focus:outline-none"
                             />
                             <Button type="button" variant="ghost" onClick={handleTagAdd}>
                                 Add
@@ -197,7 +197,7 @@ export const ReportLocationPage = () => {
                                 {tags.map((tag) => (
                                     <span
                                         key={tag}
-                                        className="text-shemaps-light-shades text-xs px-2 py-1 rounded-full flex items-center"
+                                        className="text-shemaps-primary text-xs px-2 py-1 rounded-full flex items-center"
                                     >
                                         {tag}
                                         <button

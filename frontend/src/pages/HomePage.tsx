@@ -25,7 +25,7 @@ export const HomePage = () => {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="absolute text-shemaps-light-shades shadow-md size-12 rounded-md cursor-pointer menu-button-tutorial-target"
+                        className="absolute text-shemaps-primary shadow-md size-12 rounded-md cursor-pointer menu-button-tutorial-target"
                         onClick={() => {
                             setOpenMainSheet(true);
                             if (currentStepIndex === 3) advanceTutorial(4);
@@ -33,7 +33,7 @@ export const HomePage = () => {
                     >
                         <Menu className="w-6 h-6" />
                     </Button>
-                    <h1 className="text-2xl font-bold mx-auto text-shemaps-light-shades">
+                    <h1 className="text-2xl font-bold mx-auto text-shemaps-primary">
                         Shemaps
                     </h1>
                 </div>

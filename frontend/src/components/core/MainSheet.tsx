@@ -23,7 +23,7 @@ export function MainSheet({ open, onOpenChange }: MainSheetProps) {
                 <div className="h-full flex flex-col">
                     {/* Header */}
                     <div className="flex items-center justify-between p-4 text-white">
-                        <SheetTitle className="flex items-center gap-2 text-3xl text-white">
+                        <SheetTitle className="flex items-center gap-2 text-3xl text-shemaps-primary">
                             Settings
                         </SheetTitle>
                         <SheetClose asChild>

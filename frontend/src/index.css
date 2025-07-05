@@ -57,10 +57,11 @@ button[aria-label="Open this area in Google Maps (opens a new window)"] {
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
 
-    --color-shemaps-main: #7DA4BA;
+    --color-shemaps-main: #CCE8DC;
+    --color-shemaps-primary: #2f736a;
     --color-shemaps-light-shades: #F3F1F4;
-    --color-shemaps-light-accent: #E99A9D;
-    --color-shemaps-dark-accent: #C05767;
+    --color-shemaps-light-accent: #E19E40;
+    --color-shemaps-dark-accent: #CE4B42;
     --color-shemaps-dark-shades: #374B64;
 }
 
