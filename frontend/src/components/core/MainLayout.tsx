@@ -12,7 +12,7 @@ export const MainLayout: React.FC = () => {
     const [openMainSheet, setOpenMainSheet] = useState(false);
 
     useEffect(() => {
-        const tutorialCompleted = localStorage.getItem('shemaps_tutorial_completed');
+        const tutorialCompleted = localStorage.getItem("shemaps_tutorial_completed");
         if (!tutorialCompleted) {
             setRunTutorial(true);
         }
@@ -30,7 +30,14 @@ export const MainLayout: React.FC = () => {
             <Toaster position="top-center" />
             <TutorialProvider run={runTutorial} setRun={setRunTutorial}>
                 <main className="relative h-screen w-full max-w-md mx-auto overflow-hidden pointer-events-none">
-                    <Outlet context={{ setRunTutorial, setOpenMainSheet, openMainSheet, setSelectedLocation }} />
+                    <Outlet
+                        context={{
+                            setRunTutorial,
+                            setOpenMainSheet,
+                            openMainSheet,
+                            setSelectedLocation,
+                        }}
+                    />
                 </main>
             </TutorialProvider>
         </div>

@@ -1,11 +1,6 @@
 import React, { useState, useEffect, createContext, useContext, useRef } from "react";
 import Joyride, { type CallBackProps, STATUS, type Step } from "react-joyride";
-
-interface TutorialProps {
-    run: boolean;
-    setRun: (run: boolean) => void;
-    children: React.ReactNode;
-}
+import type { TutorialProps } from "./TutorialProps";
 
 interface TutorialContextType {
     advanceTutorial: (stepIndex: number) => void;

@@ -10,6 +10,8 @@ import { AuthProvider } from "./contexts/AuthContext.tsx";
 import { LoadingProvider, useLoading } from "./contexts/LoadingContext.tsx"; // Import LoadingProvider and useLoading
 import SplashScreen from "./components/SplashScreen.tsx";
 import { RealtimeProvider } from "./contexts/RealtimeContext.tsx";
+import ErrorBoundary from "./components/ErrorBoundary.tsx";
+import { Toaster } from "./components/ui/sonner.tsx";
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
@@ -38,7 +40,9 @@ const router = createBrowserRouter([
         path: "*",
         element: (
             <LoadingProvider>
-                <AppWrapper />
+                <ErrorBoundary>
+                    <AppWrapper />
+                </ErrorBoundary>
             </LoadingProvider>
         ),
     },
