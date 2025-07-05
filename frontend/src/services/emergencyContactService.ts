@@ -12,10 +12,7 @@ export const getEmergencyContacts = async (token: string | null, deviceId: strin
 export const createEmergencyContact = async (token: string | null, deviceId: string | null, contact: { contact_name: string; phone_number: string }): Promise<EmergencyContact> => {
     const result = await authenticatedFetch(`/contacts`, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(contact),
+        data: contact,
         token,
         deviceId,
     });
@@ -25,10 +22,7 @@ export const createEmergencyContact = async (token: string | null, deviceId: str
 export const updateEmergencyContact = async (token: string | null, deviceId: string | null, contactId: string, contact: { contact_name: string; phone_number: string }): Promise<EmergencyContact> => {
     const result = await authenticatedFetch(`/contacts/${contactId}`, {
         method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(contact),
+        data: contact,
         token,
         deviceId,
     });

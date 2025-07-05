@@ -148,17 +148,12 @@ func (a *app) setupRoute(h *handlers.Handlers) http.Handler {
 			r.Post("/contacts", h.EmergencyContact.CreateContact)
 			r.Patch("/contacts/{contactID}", h.EmergencyContact.UpdateContact)
 			r.Delete("/contacts/{contactID}", h.EmergencyContact.DeleteContact)
-		})
 
-		r.Get("/routes", h.Directions.GetDirections)
+			r.Get("/routes", h.Directions.GetDirections)
 
-		r.Get("/reports", h.Report.FindReports)
-
-		// Protected routes
-		r.Group(func(r chi.Router) {
-			authMiddleware := custommiddleware.Authenticate(h.Auth.GetAuthService())
-			r.Use(authMiddleware)
+			r.Get("/reports", h.Report.FindReports)
 			r.Post("/reports", h.Report.CreateReport)
+
 			r.Get("/ws", h.WebSocket.ServeWs)
 		})
 	})

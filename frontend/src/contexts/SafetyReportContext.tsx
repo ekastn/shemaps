@@ -1,6 +1,8 @@
-import { createContext, type ReactNode, useCallback, useContext, useState } from "react";
+import { authenticatedFetch } from "@/lib/api";
 import type { SafetyReport } from "@/lib/types"; // Kita perlu tambahkan tipe data ini
-import { apiFetch } from "@/lib/api";
+import { createContext, type ReactNode, useCallback, useContext, useState } from "react";
+import { useAuth } from "./AuthContext";
+import { useLoading } from "./LoadingContext";
 
 interface SafetyReportContextType {
     reports: SafetyReport[];
@@ -15,8 +17,11 @@ export function SafetyReportProvider({ children }: { children: ReactNode }) {
     const [reports, setReports] = useState<SafetyReport[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const { jwtToken, deviceId } = useAuth();
+    const { isAuthLoaded } = useLoading();
 
     const fetchReportsInBounds = useCallback(async (bounds: google.maps.LatLngBounds) => {
+        if (!isAuthLoaded) return;
         setIsLoading(true);
         setError(null);
         try {
@@ -25,8 +30,9 @@ export function SafetyReportProvider({ children }: { children: ReactNode }) {
             const east = bounds.getNorthEast().lng();
             const west = bounds.getSouthWest().lng();
 
-            const resp = await apiFetch(
-                `/reports?north=${north}&south=${south}&east=${east}&west=${west}`
+            const resp = await authenticatedFetch(
+                `/reports?north=${north}&south=${south}&east=${east}&west=${west}`,
+                { token: jwtToken, deviceId: deviceId }
             );
 
             setReports(resp.data || []);
@@ -36,7 +42,7 @@ export function SafetyReportProvider({ children }: { children: ReactNode }) {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [isAuthLoaded, jwtToken, deviceId]);
 
     return (
         <SafetyReportContext.Provider value={{ reports, fetchReportsInBounds, isLoading, error }}>

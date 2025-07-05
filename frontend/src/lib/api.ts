@@ -1,38 +1,67 @@
+import axios from 'axios';
+
 const apiURL = import.meta.env.VITE_API_URL;
 
-interface AuthenticatedFetchOptions extends RequestInit {
+interface AuthenticatedFetchOptions {
     token?: string | null;
     deviceId?: string | null;
+    method?: string;
+    headers?: Record<string, string>;
+    data?: any;
+    params?: Record<string, any>;
 }
 
 export const authenticatedFetch = async (path: string, options: AuthenticatedFetchOptions = {}) => {
     const url = `${apiURL}${path}`;
 
-    const headers = new Headers(options.headers);
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        ...(options.headers || {})
+    };
 
     if (options.token) {
-        headers.set("Authorization", `Bearer ${options.token}`);
+        headers["Authorization"] = `Bearer ${options.token}`;
     }
     if (options.deviceId) {
-        headers.set("X-Device-ID", options.deviceId);
+        headers["X-Device-ID"] = options.deviceId;
     }
 
-    const response = await fetch(url, { ...options, headers });
-
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Something went wrong");
+    try {
+        const response = await axios({
+            method: options.method || 'get',
+            url,
+            headers,
+            data: options.data,
+            params: options.params,
+        });
+        return response.data;
+    } catch (error: any) {
+        const errorMessage = error.response?.data?.message || error.message || "Something went wrong";
+        throw new Error(errorMessage);
     }
-
-    return response.json();
 };
 
-export const apiFetch = async (path: string, options: RequestInit = {}) => {
+export const apiFetch = async (path: string, options: AuthenticatedFetchOptions = {}) => {
     const url = `${apiURL}${path}`;
-    const response = await fetch(url, options);
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Something went wrong");
+
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        ...(options.headers || {})
+    };
+
+    const currentUrl = window.location.href;
+
+    try {
+        const response = await axios({
+            method: options.method || 'get',
+            url,
+            headers,
+            data: options.data,
+            params: options.params,
+        });
+        return response.data;
+    } catch (error: any) {
+        const errorMessage = error.response?.data?.message || error.message || "Something went wrong";
+        throw new Error(errorMessage);
     }
-    return response.json();
 };
