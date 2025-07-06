@@ -109,7 +109,6 @@ func (a *app) setupRoute(h *handlers.Handlers) http.Handler {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Use(custommiddleware.RequestDumper)
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   a.cfg.AllowedOrigins,
 		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
@@ -123,6 +122,10 @@ func (a *app) setupRoute(h *handlers.Handlers) http.Handler {
 	// through ctx.Done() that the request has timed out and further
 	// processing should be stopped.
 	r.Use(middleware.Timeout(60 * time.Second))
+
+	if a.cfg.IsDev {
+		r.Use(custommiddleware.RequestDumper)
+	}
 
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)

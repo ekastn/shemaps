@@ -14,6 +14,7 @@ type Config struct {
 	PostgresURL      string
 	JWTSecret        string
 	AllowedOrigins   []string
+	IsDev            bool
 }
 
 func LoadConfig() *Config {
@@ -31,12 +32,15 @@ func LoadConfig() *Config {
 		allowedOrigins = splitAndTrim(allowedOriginsStr, ",")
 	}
 
+	isDev := env.GetString("APP_ENV", "dev") == "dev"
+
 	return &Config{
 		GoogleMapsAPIKey: apiKey,
 		Addr:             addr,
 		PostgresURL:      pgURL,
 		JWTSecret:        jwtSecret,
 		AllowedOrigins:   allowedOrigins,
+		IsDev:            isDev,
 	}
 }
 
