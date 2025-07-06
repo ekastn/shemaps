@@ -7,6 +7,7 @@ import { Geolocation, type Position as CapPosition } from "@capacitor/geolocatio
 import { Capacitor } from "@capacitor/core";
 import { useLoading } from "./LoadingContext"; // Import useLoading
 import { useRealtime } from "./RealtimeContext";
+import { areCoordinatesClose } from "@/lib/utils";
 
 interface LocationContextType {
     currentCoordinate: Coordinate | null;
@@ -15,13 +16,15 @@ interface LocationContextType {
     setCurrentCoordinate: (coord: Coordinate | null) => void;
     setSelectedLocation: (location: Location | null) => void;
     addToRecentSearches: (location: Location) => void;
-    panToCurrentLocation: () => void;
+    toggleMapCameraView: () => void;
+    currentHeading: number | null;
 }
 
 const LocationContext = createContext<LocationContextType | undefined>(undefined);
 
 export function LocationProvider({ children }: { children: ReactNode }) {
     const [currentCoordinate, setCurrentCoordinate] = useState<Coordinate | null>(null);
+    const [currentHeading, setCurrentHeading] = useState<number | null>(null);
     const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
     const [recentSearches, setRecentSearches] = useState<Location[]>(() => {
         try {
@@ -71,9 +74,12 @@ export function LocationProvider({ children }: { children: ReactNode }) {
                         return;
                     }
                     if (position) {
-                        const { latitude, longitude } = position.coords;
+                        const { latitude, longitude, heading } = position.coords;
                         const newCoord = { lat: latitude, lng: longitude };
                         setCurrentCoordinate(newCoord);
+                        if (heading !== null) {
+                            setCurrentHeading(heading);
+                        }
                     }
                 };
 
@@ -109,8 +115,38 @@ export function LocationProvider({ children }: { children: ReactNode }) {
         localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
     }, [recentSearches]);
 
-    const panToCurrentLocation = () => {
-        if (map && currentCoordinate) {
+    const toggleMapCameraView = () => {
+        if (!map || !currentCoordinate) {
+            return;
+        }
+
+        const currentMapCenter = map.getCenter();
+        const currentTilt = map.getTilt();
+        const currentHeading = map.getHeading();
+
+        const isMapCentered = currentMapCenter && areCoordinatesClose(
+            { lat: currentMapCenter.lat(), lng: currentMapCenter.lng() },
+            currentCoordinate
+        );
+
+        const isDefaultView = Math.abs(currentTilt) < 0.01 && Math.abs(currentHeading) < 0.01;
+
+        if (!isMapCentered) {
+            // If map is not centered on current location, pan to it and reset view
+            map.panTo(currentCoordinate);
+            map.setZoom(18);
+            map.setTilt(0);
+            map.setHeading(0);
+        } else if (!isDefaultView) {
+            // If map is centered but not in default view, reset view
+            map.setTilt(0);
+            map.setHeading(0);
+            map.panTo(currentCoordinate);
+            map.setZoom(18);
+        } else {
+            // If map is centered and in default view, switch to tilted view
+            map.setTilt(45);
+            map.setHeading(currentHeading !== null ? currentHeading : 0);
             map.panTo(currentCoordinate);
             map.setZoom(18);
         }
@@ -132,7 +168,8 @@ export function LocationProvider({ children }: { children: ReactNode }) {
                 setCurrentCoordinate,
                 setSelectedLocation,
                 addToRecentSearches,
-                panToCurrentLocation,
+                toggleMapCameraView,
+                currentHeading
             }}
         >
             {children}
