@@ -1,3 +1,5 @@
+import { PanicButton } from "@/components/core/PanicButton";
+import { SMLocationButton } from "@/components/maps/SMLocationButton";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useDirections } from "@/contexts/DirectionsContext";
@@ -75,7 +77,9 @@ export const DirectionsPage = () => {
                         </div>
                     </div>
                     {isLoading && (
-                        <div className="mt-4 bg-shemaps-light-shades p-4 rounded-md">Finding routes...</div>
+                        <div className="mt-4 bg-shemaps-light-shades p-4 rounded-md">
+                            Finding routes...
+                        </div>
                     )}
                     {error && (
                         <div className="mt-4 bg-shemaps-dark-accent text-red-800 p-4 rounded-md">
@@ -85,8 +89,12 @@ export const DirectionsPage = () => {
                 </div>
             </div>
 
-            {routes.length > 0 && (
-                <div className="absolute bottom-0 left-0 right-0">
+            <div className="absolute bottom-0 left-0 right-0 ">
+                <div className="flex items-center justify-between p-4 gap-y-2 pointer-events-auto">
+                    <SMLocationButton />
+                    <PanicButton />
+                </div>
+                {routes.length > 0 && (
                     <div className="p-6 max-h-[60vh] bg-shemaps-main overflow-y-auto rounded-t-3xl shadow-lg pointer-events-auto overflow-hidden">
                         <div className="route-info-tutorial-target">
                             <div className="flex items-start justify-between">
@@ -117,14 +125,16 @@ export const DirectionsPage = () => {
                                     <X className="h-5 w-5" />
                                 </Button>
                             </div>
-                            <p className="text-shemaps-primary/80">{routes[selectedRouteIndex].summary}</p>
+                            <p className="text-shemaps-primary/80">
+                                {routes[selectedRouteIndex].summary}
+                            </p>
                             <p className="text-shemaps-primary/80">
                                 {routes[selectedRouteIndex].legs[0].duration?.text}
                             </p>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </>
     );
 };
